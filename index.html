@@ -344,7 +344,7 @@ var RULES=[["dn","ลดลงจากปี 68"],["up","เพิ่มขึ�
 function fmo(k){return k.fm||(/6 เดือน/.test(k.f||"")?"h":/รายปี/.test(k.f||"")?"y":"q")}
 function pers(k){return PL[fmo(k)]}
 function meta(k){return{tg:k.tg,r:k.r,v:k.v,o:k.o,t:k.t,d:k.d,u:k.u,f:k.f,note:k.note,res:k.res,rl:k.rl,fm:k.fm,g:k.g}}
-var MK=["tg","r","v","o","t","d","u","f","note","res","rl","fm","g"],CE=false,AUTH=false;
+var MK=["tg","r","v","o","t","d","u","f","note","res","rl","fm","g"],CE=false,AUTH=true;
 var Q={},SAVING=false,DR={};
 function dbw(f,id){var done=false;toast("กำลังบันทึก…",9000);var t=setTimeout(function(){if(!done)toast("ระบบยังไม่ตอบกลับ — กำลังรอ ลองรอสักครู่",5000)},8000);
  function run(n){var p;try{p=f()}catch(e){return Promise.reject(e)}return p.catch(function(e){if(n>0&&(!e||!e.code||e.code==="unavailable"||e.code==="resource_exhausted"))return new Promise(function(r){setTimeout(r,400+Math.random()*700)}).then(function(){return run(n-1)});throw e})}
@@ -376,7 +376,7 @@ function makeDB(){function ref(c,i){return FSM.doc(FDB,c,i)}
  function err(e){var c=String((e&&e.code)||"").replace("firestore/","");var m={"permission-denied":"not_granted","not-found":"invalid_argument","unavailable":"unavailable","resource-exhausted":"resource_exhausted"};return{code:m[c]||c||"error",message:e&&e.message}}
  function P(p){return p.catch(function(e){throw err(e)})}
  return{collection:function(c){return{onSnapshot:function(cb){return FSM.onSnapshot(FSM.collection(FDB,c),function(sn){cb({docs:sn.docs.map(function(d){return{id:d.id,data:function(){return d.data()}}})})},function(){})},doc:function(i){return{set:function(d){return P(FSM.setDoc(ref(c,i),d))},update:function(d){return P(FSM.updateDoc(ref(c,i),d))},delete:function(){return P(FSM.deleteDoc(ref(c,i)))}}}}}}}
-function applyRole(){var ap=!!(ME&&ME.status==="approved");ADMIN=ap&&ME.role==="admin";AUTH=ap;CANW=ap;UNL=ap;STAFF={};REQ={};
+function applyRole(){var ap=!!(ME&&ME.status==="approved");ADMIN=ap&&ME.role==="admin";CANW=ap;UNL=ap;STAFF={};REQ={};
  if(ADMIN){Object.keys(ALLU).forEach(function(i){var u=ALLU[i];if(u.status==="approved")STAFF[i]=u;else if(u.status==="pending")REQ[i]=u})}
  else if(ap&&UID)STAFF[UID]={username:ME.username};
  MYREQ=ME;nav();updLogin();render();if(ovMode==="pm")pmPanel()}

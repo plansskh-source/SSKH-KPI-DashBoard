@@ -97,13 +97,17 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 <div class="app">
 <aside id="sb"><div class="lg2">🏥 SSKH-KPI+</div>
 <div class="sec">เมนู</div><button class="nb on" id="nd">📊 แดชบอร์ดรวม</button>
-<div class="sec" id="bsec" hidden>งานหลังบ้าน</div>
-<button class="nb" id="nk" hidden>➕ เพิ่มตัวชี้วัด</button>
-<button class="nb" id="ad" hidden>✏️ กรอกข้อมูลรายไตรมาส</button>
-<div class="sec" style="margin-top:14px">จัดการข้อมูล</div>
+<button class="nb gh" id="btn_dm_toggle" style="margin-top:4px"><span class="chev">▸</span><span class="nm">💾 จัดการข้อมูล</span><span class="cnt">3</span></button>
+<div class="gb" id="sub_dm" style="display:none">
 <button class="nb" id="btn_sync" style="font-size:.85rem">🔄 ซิงค์ Google Sheets</button>
 <button class="nb" id="btn_exp" style="font-size:.85rem">📤 ส่งออกข้อมูล (JSON/CSV)</button>
 <button class="nb" id="btn_imp" style="font-size:.85rem">📥 นำเข้าข้อมูล (JSON/CSV)</button>
+<button class="nb" id="btn_dm_hub" style="font-size:.8rem;color:var(--ac);margin-top:2px;border-top:1px dashed var(--bd);border-radius:0 0 10px 10px;padding-top:6px">📋 ศูนย์จัดการข้อมูลทั้งหมด</button>
+</div>
+<div class="sec" id="bsec" hidden>งานหลังบ้าน</div>
+<button class="nb" id="nk" hidden>➕ เพิ่มตัวชี้วัด</button>
+<button class="nb" id="ad" hidden>✏️ กรอกข้อมูลรายไตรมาส</button>
+<div class="sec" style="margin-top:14px">กลุ่มตัวชี้วัด</div>
 <div id="kl"></div>
 <div id="ro" style="margin:10px 8px;padding:9px 12px;background:var(--nabg);color:var(--mu);border-radius:12px;font-size:.8rem;line-height:1.4">👁 โหมดดูอย่างเดียว<br>ดูแดชบอร์ดได้โดยไม่ต้องล็อกอิน แต่แก้ไขข้อมูลไม่ได้</div>
 
@@ -124,7 +128,8 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 </div>
 </main></div>
 <div id="thp" hidden><div class="thh">☰ ตัวเลือก</div><button class="nb" id="lgp" style="margin-bottom:10px">🔑 เข้าสู่ระบบ</button><div class="thh" style="font-weight:600;font-size:.85rem;color:var(--mu)">🎨 ธีม</div><div class="sw" id="sw"></div><button class="nb" id="md" style="margin-top:8px"></button><button class="nb" id="rg" hidden style="margin-top:8px">📝 สมัครสมาชิก</button><button class="nb" id="pm" hidden style="margin-top:8px">👥 จัดการทีมงาน</button>
-<div class="thh" style="font-weight:600;font-size:.85rem;color:var(--mu);margin-top:10px">💾 ฐานข้อมูล</div>
+<div class="thh" style="font-weight:600;font-size:.85rem;color:var(--mu);margin-top:10px">💾 จัดการข้อมูล</div>
+<button class="nb" id="btn_dm_hub2" style="margin-top:4px;color:var(--ac);font-weight:600">📋 ศูนย์จัดการข้อมูลทั้งหมด</button>
 <button class="nb" id="btn_sync2" style="margin-top:4px">🔄 ซิงค์ Google Sheets</button>
 <button class="nb" id="btn_exp2" style="margin-top:4px">📤 ส่งออกข้อมูล (JSON/CSV)</button>
 <button class="nb" id="btn_imp2" style="margin-top:4px">📥 นำเข้าข้อมูล (JSON/CSV)</button>
@@ -472,7 +477,27 @@ function hx(b){return Array.prototype.map.call(new Uint8Array(b),function(x){ret
 function hashPw(pw,salt){var en=new TextEncoder();return crypto.subtle.importKey("raw",en.encode(pw),"PBKDF2",false,["deriveBits"]).then(function(k){return crypto.subtle.deriveBits({name:"PBKDF2",salt:en.encode(salt),iterations:150000,hash:"SHA-256"},k,256)}).then(hx)}
 function rndSalt(){var a=new Uint8Array(16);crypto.getRandomValues(a);return hx(a)}
 function updLogin(){var lab=!AUTH?"🔑 เข้าสู่ระบบ":ADMIN?"👑 ผู้ดูแล":(UID&&STAFF[UID]&&UNL)?"👤 "+(STAFF[UID].username||"สมาชิก"):"🔑 เข้าสู่ระบบ";document.getElementById("lgb").textContent=lab;document.getElementById("lgp").textContent=lab}
-function loginDlg(){var h,sm=UID&&STAFF[UID];
+function loginDlg(){
+ var isStandAlone = !window.claude || !window.claude.use;
+ if(isStandAlone){
+  if(ADMIN){
+   ov('<h3>👑 ผู้ดูแลระบบ (Admin)</h3>'+
+      '<p style="font-size:.9rem;color:var(--mu);margin-bottom:14px">คุณเข้าสู่ระบบในฐานะผู้ดูแลแล้ว สามารถเพิ่ม/แก้ไขตัวชี้วัด และกรอกข้อมูลได้</p>'+
+      '<div class="ac"><button class="pr" id="sa_lgo">ออกจากระบบ</button><button id="x">ปิด</button></div>', "lg");
+  }else{
+   ov('<h3>🔑 เข้าสู่ระบบผู้ดูแล</h3>'+
+      '<p style="font-size:.88rem;color:var(--mu);margin-bottom:14px">กรุณาระบุรหัสผ่านผู้ดูแลระบบ เพื่อปลดล็อกสิทธิ์การแก้ไขและกรอกข้อมูล</p>'+
+      '<label style="display:block;margin-bottom:6px;font-size:.85rem;font-weight:600">รหัสผ่านผู้ดูแล:</label>'+
+      '<input type="password" id="sa_admin_pw" placeholder="ระบุรหัสผ่าน..." style="width:100%;padding:10px 14px;border:1.5px solid var(--bd);border-radius:12px;font:inherit;font-size:.95rem;background:var(--bg);color:var(--tx);outline:none">'+
+      '<div class="ac" style="margin-top:16px"><button class="pr" id="sa_admin_login_btn">เข้าสู่ระบบ</button><button id="x">ยกเลิก</button></div>', "lg");
+   setTimeout(function(){
+    var inp=document.getElementById("sa_admin_pw");
+    if(inp){inp.focus();}
+   },50);
+  }
+  return;
+ }
+ var h,sm=UID&&STAFF[UID];
  if(!AUTH)h='<h3>เข้าสู่ระบบ</h3><p style="font-size:.9rem">หน้านี้ยืนยันตัวตนด้วยบัญชี claude.ai กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ แล้วกลับมาเปิดลิงก์นี้อีกครั้ง</p><a class="lk" href="https://claude.ai/login" target="_blank" rel="noopener">เข้าสู่ระบบ claude.ai ›</a><div class="ac"><button id="x">ปิด</button></div>';
  else if(ADMIN)h='<h3>👑 ผู้ดูแลระบบ</h3><p style="font-size:.9rem">คุณเข้าสู่ระบบในฐานะเจ้าของหรือผู้ดูแลแล้ว ไม่ต้องใช้ชื่อผู้ใช้และรหัสผ่าน</p><div class="ac"><button id="x">ปิด</button></div>';
  else if(sm&&UNL)h='<h3>👤 '+E(sm.username)+'</h3><p style="font-size:.9rem">เข้าสู่ระบบแล้ว แก้ไขข้อมูลได้</p><div class="ac"><button class="pr" id="lgo">ออกจากระบบ</button><button id="x">ปิด</button></div>';
@@ -493,6 +518,34 @@ document.getElementById("pm").addEventListener("click",function(){document.getEl
 document.getElementById("lgb").addEventListener("click",loginDlg);document.getElementById("lgp").addEventListener("click",function(){document.getElementById("thp").hidden=true;loginDlg()});
 document.getElementById("ov").addEventListener("click",function(e){var t=e.target,id=t.id,a=t.dataset&&t.dataset.a,v=function(i){return document.getElementById(i).value.trim()},fail=werr;
  if(t===this||id==="x"){ov(null);return}
+ if(id==="sa_admin_login_btn"){
+  var pw=(document.getElementById("sa_admin_pw")||{}).value||"";
+  if(pw==="admin1234"){
+   ADMIN=true;
+   UNL=true;
+   UID="local_admin";
+   try{sessionStorage.setItem("sskh_admin_auth","1")}catch(z){}
+   ov(null);
+   nav();
+   render();
+   toast("เข้าสู่ระบบผู้ดูแลสำเร็จแล้ว 👑");
+  }else{
+   toast("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง ❌");
+  }
+  return;
+ }
+ if(id==="sa_lgo"){
+  ADMIN=false;
+  UNL=false;
+  UID=null;
+  adm=false;
+  try{sessionStorage.removeItem("sskh_admin_auth")}catch(z){}
+  ov(null);
+  nav();
+  render();
+  toast("ออกจากระบบแล้ว (โหมดดูอย่างเดียว) 👁");
+  return;
+ }
  if(id==="lgr"){ov(null);regForm();return}
  if(id==="lgo"){UNL=false;try{sessionStorage.removeItem("kpiUnl")}catch(z){}ov(null);adm=false;nav();render();toast("ออกจากระบบแล้ว");return}
  if(id==="lgi"){var un=v("lu"),pw=document.getElementById("lp").value,s0=STAFF[UID];if(!s0||!un||!pw){toast("กรอกชื่อผู้ใช้และรหัสผ่าน");return}
@@ -865,7 +918,16 @@ document.addEventListener("click",function(e){
  }
 });
 document.getElementById("nd").addEventListener("click",function(){ov(null);adm=false;view="home";curG="all";document.getElementById("ad").classList.remove("on");render();window.scrollTo(0,0)});
-document.getElementById("hb").addEventListener("click",function(){document.body.classList.toggle("open")});var thp=document.getElementById("thp");document.getElementById("thb").addEventListener("click",function(e){e.stopPropagation();thp.hidden=!thp.hidden});document.addEventListener("click",function(e){if(!thp.hidden&&!(e.target.closest&&e.target.closest("#thp")))thp.hidden=true});document.addEventListener("keydown",function(e){if(e.key==="Escape")thp.hidden=true});
+document.getElementById("hb").addEventListener("click",function(){document.body.classList.toggle("open")});var thp=document.getElementById("thp");document.getElementById("thb").addEventListener("click",function(e){e.stopPropagation();thp.hidden=!thp.hidden});document.addEventListener("click",function(e){if(!thp.hidden&&!(e.target.closest&&e.target.closest("#thp")))thp.hidden=true});document.addEventListener("keydown",function(e){
+ if(e.key==="Escape"){thp.hidden=true}
+ if(e.key==="Enter"){
+  var inp=document.getElementById("sa_admin_pw");
+  if(inp&&document.activeElement===inp){
+   var btn=document.getElementById("sa_admin_login_btn");
+   if(btn)btn.click();
+  }
+ }
+});
 document.getElementById("sb").addEventListener("click",function(e){if(e.target.closest(".nb")&&!e.target.closest(".gh"))document.body.classList.remove("open")});
 document.addEventListener("click",function(e){if(document.body.classList.contains("open")&&!e.target.closest("#sb")&&e.target.id!=="hb")document.body.classList.remove("open")});
 document.getElementById("dt").addEventListener("click",function(e){if(e.target.id!=="dk"||!DB)return;var k=DATA[sel];if(!k||!k.custom)return;
@@ -989,10 +1051,12 @@ function initFallbackStorage(){
 
  DB=mockDb;
  AUTH=true;
- ADMIN=true;
+ var isLocalAdmin=false;
+ try{isLocalAdmin=sessionStorage.getItem("sskh_admin_auth")==="1"}catch(z){}
+ ADMIN=isLocalAdmin;
  CANW=true;
- UID="local_admin";
- UNL=true;
+ UID=isLocalAdmin?"local_admin":null;
+ UNL=isLocalAdmin;
  dbc=mockDb.collection("kpi");
 
  dbc.onSnapshot(function(sn){KD={};sn.docs.forEach(function(d){KD[d.id]=d.data()});applyOv()});
@@ -1090,10 +1154,51 @@ function showSyncDlg(){
   '<div class="ac" style="margin-top:16px"><button id="x">ปิด</button></div>');
 }
 
+function showDataMgmtDlg(){
+ ov('<h3>💾 จัดการข้อมูลระบบ (Data Management)</h3>'+
+  '<p style="font-size:.88rem;color:var(--mu);margin-bottom:14px">ศูนย์รวมเครื่องมือจัดการข้อมูลแดชบอร์ด KPI+ ครบทั้ง 3 รายการ</p>'+
+  '<div style="display:flex;flex-direction:column;gap:10px">'+
+   '<button class="nb" id="dlg_btn_sync" style="text-align:left;padding:12px 14px;background:var(--nabg);border-radius:14px;border:1px solid var(--bd);display:flex;align-items:center;gap:12px;cursor:pointer">'+
+    '<span style="font-size:1.6rem">🔄</span>'+
+    '<div><b style="font-size:.95rem">ซิงค์ Google Sheets</b><div style="font-size:.8rem;color:var(--mu);margin-top:2px">เชื่อมต่อหรือดึงข้อมูลล่าสุดจาก Google Sheets แบบ Real-time</div></div>'+
+   '</button>'+
+   '<button class="nb" id="dlg_btn_exp" style="text-align:left;padding:12px 14px;background:var(--nabg);border-radius:14px;border:1px solid var(--bd);display:flex;align-items:center;gap:12px;cursor:pointer">'+
+    '<span style="font-size:1.6rem">📤</span>'+
+    '<div><b style="font-size:.95rem">ส่งออกข้อมูล (JSON / CSV)</b><div style="font-size:.8rem;color:var(--mu);margin-top:2px">ดาวน์โหลดข้อมูลสำรอง หรือนำไปเปิดวิเคราะห์ใน Excel</div></div>'+
+   '</button>'+
+   '<button class="nb" id="dlg_btn_imp" style="text-align:left;padding:12px 14px;background:var(--nabg);border-radius:14px;border:1px solid var(--bd);display:flex;align-items:center;gap:12px;cursor:pointer">'+
+    '<span style="font-size:1.6rem">📥</span>'+
+    '<div><b style="font-size:.95rem">นำเข้าข้อมูล (JSON / CSV)</b><div style="font-size:.8rem;color:var(--mu);margin-top:2px">อัปโหลดไฟล์สำรองข้อมูล JSON เข้าระบบเพื่ออัปเดตหรือกู้คืน</div></div>'+
+   '</button>'+
+  '</div>'+
+  '<div class="ac" style="margin-top:16px"><button id="x">ปิด</button></div>');
+}
+
+// Restore saved menu state for Data Management
+try{
+ if(localStorage.getItem("kpiOpenDm")==="1"){
+  var _sdm=document.getElementById("sub_dm"), _bdm=document.getElementById("btn_dm_toggle");
+  if(_sdm)_sdm.style.display="block";
+  if(_bdm)_bdm.classList.add("open");
+ }
+}catch(z){}
+
 document.addEventListener("click",function(e){
- if(e.target.closest&&e.target.closest("#btn_exp,#btn_exp2")){showExportDlg();return}
- if(e.target.closest&&e.target.closest("#btn_imp,#btn_imp2")){showImportDlg();return}
- if(e.target.closest&&e.target.closest("#btn_sync,#btn_sync2")){showSyncDlg();return}
+ if(e.target.closest&&e.target.closest("#btn_dm_toggle")){
+  var sub=document.getElementById("sub_dm");
+  var btn=document.getElementById("btn_dm_toggle");
+  if(sub&&btn){
+   var op=sub.style.display!=="none";
+   sub.style.display=op?"none":"block";
+   btn.classList.toggle("open",!op);
+   try{localStorage.setItem("kpiOpenDm",!op?"1":"0")}catch(z){}
+  }
+  return;
+ }
+ if(e.target.closest&&e.target.closest("#btn_dm_hub,#btn_dm_hub2")){showDataMgmtDlg();return}
+ if(e.target.closest&&e.target.closest("#btn_exp,#btn_exp2,#dlg_btn_exp")){showExportDlg();return}
+ if(e.target.closest&&e.target.closest("#btn_imp,#btn_imp2,#dlg_btn_imp")){showImportDlg();return}
+ if(e.target.closest&&e.target.closest("#btn_sync,#btn_sync2,#dlg_btn_sync")){showSyncDlg();return}
  if(e.target.id==="do_exp_json"){exportData("json");ov(null);return}
  if(e.target.id==="do_exp_csv"){exportData("csv");ov(null);return}
  if(e.target.id==="save_sync_url"){

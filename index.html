@@ -109,6 +109,8 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 <div id="kl"></div>
 </div>
 <div class="sb-foot">
+<button id="ad" style="display:none!important" hidden></button>
+<button id="nk" style="display:none!important" hidden></button>
 <button class="nb" id="btn_settings_nav"><span style="font-size:1.15rem">⚙️</span><span>การตั้งค่า</span></button>
 <div id="ro" style="margin:8px 0 0;padding:8px 10px;background:var(--nabg);color:var(--mu);border-radius:10px;font-size:.76rem;line-height:1.35">👁 โหมดดูอย่างเดียว<br>แก้ไขข้อมูลไม่ได้</div>
 </div>
@@ -256,7 +258,20 @@ function gnd(k){var x=GRP.filter(function(y){return y.id===gid(k)})[0];return !!
 function cdl(k){return k.cd?(/^\d+$/.test(k.cd)?k.cd+".":k.cd):k.n+"."}
 function gfull(i){var x=GRP.filter(function(y){return y.id===i})[0];return x?x.i+" "+x.n:""}
 function gname(i){if(i==="all")return"ภาพรวมทุกหัวข้อหลัก";var x=GRP.filter(function(y){return y.id===i})[0];return x?x.n:""}
-var PL={q:[[2,"Q1"],[3,"Q2"],[4,"Q3"],[5,"Q4"],[6,"รายปี"]],h:[[3,"6 เดือนแรก"],[5,"6 เดือนหลัง"],[6,"รายปี"]],y:[[6,"รายปี"]]},FML={q:"รายไตรมาส",h:"ราย 6 เดือน",y:"รายปี"};
+var PL={
+  q:[[2,"Q1"],[3,"Q2"],[4,"Q3"],[5,"Q4"],[6,"รายปี"]],
+  qn:[[2,"Q1"],[3,"Q2"],[4,"Q3"],[5,"Q4"]],
+  h:[[3,"6 เดือนแรก"],[5,"6 เดือนหลัง"],[6,"รายปี"]],
+  hn:[[3,"6 เดือนแรก"],[5,"6 เดือนหลัง"]],
+  y:[[6,"รายปี"]]
+},
+FML={
+  q:"รายไตรมาส",
+  qn:"รายไตรมาส (ไม่มีรายปี)",
+  h:"ราย 6 เดือน",
+  hn:"ราย 6 เดือน (ไม่มีรายปี)",
+  y:"รายปี"
+};
 function isn(v){return typeof v==="number"}
 function lastv(r,k){var o=k?pers(k).map(function(p){return p[0]}):[2,3,4,5,6];for(var i=o.length-1;i>=0;i--)if(isn(r[o[i]]))return r[o[i]];return null}
 function rv(r,i){var a=r[8];if(!a)return null;var x=a[i-2];return isn(x)?x:null}
@@ -400,6 +415,7 @@ document.getElementById("tabs").addEventListener("click",function(e){var b=e.tar
 document.getElementById("tb").addEventListener("click",function(e){var r=e.target.closest("tr");if(AUTH&&r&&r.dataset.i!==undefined){keepBack();sel=+r.dataset.i;view="kpi";adm=false;render();window.scrollTo(0,0)}});
 document.getElementById("sw").addEventListener("click",function(e){var b=e.target.closest("button");if(b){TH.ac=b.dataset.a;applyTheme()}});
 document.getElementById("md").addEventListener("click",function(){var i=MODES.map(function(m){return m[0]}).indexOf(TH.md);TH.md=MODES[(i+1)%3][0];applyTheme()});
+function clrAd(){var a=document.getElementById("ad");if(a)a.classList.remove("on")}
 var adBtn=document.getElementById("ad");if(adBtn)adBtn.addEventListener("click",function(){adm=!adm;if(adm)view="kpi";this.classList.toggle("on",adm);render()});
 document.getElementById("dt").addEventListener("click",function(e){var id=e.target.id,k=DATA[sel];
  if(e.target&&e.target.id==="btn_add_subrow"){
@@ -423,7 +439,7 @@ document.getElementById("dt").addEventListener("click",function(e){var id=e.targ
   });
   return;
  }
- if(id==="cn"){clrDR(k.n);adm=false;document.getElementById("ad").classList.remove("on");render()}
+ if(id==="cn"){clrDR(k.n);adm=false;clrAd();render()}
  if(id==="sv"){if(!dbc){toast("ยังเชื่อมต่อระบบจัดเก็บข้อมูลไม่ได้ — ต้องล็อกอิน claude.ai ด้วยบัญชีที่มีสิทธิ์");return}
   if(SAVING)return;SAVING=true;var sb=document.getElementById("sv");if(sb)sb.disabled=true;var rows=k.rows.map(function(r){return r.slice()});document.querySelectorAll("#dt .ed input[data-c]").forEach(function(inp){rows[+inp.dataset.r][+inp.dataset.c]=parseV(inp.value)});document.querySelectorAll("#dt .ed input[data-q]").forEach(function(inp){var rr=rows[+inp.dataset.r];rr[8]=(rr[8]||[null,null,null,null,null]).slice();rr[8][+inp.dataset.q-2]=parseV(inp.value)});
   document.querySelectorAll("#dt .ed input[data-hy]").forEach(function(inp){var rr=rows[+inp.dataset.r],y=+inp.dataset.hy,pp=+inp.dataset.hp,val=parseV(inp.value);if(y===2568&&pp===6){rr[1]=val;return}rr[9]=rr[9]?JSON.parse(JSON.stringify(rr[9])):{};if(!rr[9][y])rr[9][y]=[null,null,null,null,null];rr[9][y][pp-2]=val});
@@ -448,13 +464,20 @@ document.getElementById("dt").addEventListener("click",function(e){var id=e.targ
   });
  }
 });
-DATA.forEach(function(k){var m=fmo(k);k.rows.forEach(function(r){if(m==="h"&&isn(r[2])&&r[3]===null){r[3]=r[2];r[2]=null}if(m==="y"&&isn(r[2])&&r[6]===null){r[6]=r[2];r[2]=null}})});
+DATA.forEach(function(k){var m=fmo(k);k.rows.forEach(function(r){if((m==="h"||m==="hn")&&isn(r[2])&&r[3]===null){r[3]=r[2];r[2]=null}if(m==="y"&&isn(r[2])&&r[6]===null){r[6]=r[2];r[2]=null}})});
 DATA.forEach(function(k){SEED[k.n]=JSON.parse(JSON.stringify(k.rows));SEEDM[k.n]=meta(k)});
 applyTheme();render();
 var BASE=DATA.slice(),KD={},PEND=0;
 var RULES=[["dn","ลดลงจากปี 68"],["up","เพิ่มขึ้นจากปี 68"],["lt","ต่ำกว่าค่าเป้าหมาย"],["le","ไม่เกินค่าเป้าหมาย"],["ge","ไม่น้อยกว่าค่าเป้าหมาย"],["none","ไม่ประเมินอัตโนมัติ"]];
-function fmo(k){return k.fm||(/6 เดือน/.test(k.f||"")?"h":/รายปี/.test(k.f||"")?"y":"q")}
-function pers(k){return PL[fmo(k)]}
+function fmo(k){
+ if(k.fm)return k.fm;
+ var f=k.f||"";
+ if(/ไม่มีรายปี/.test(f)||/เฉพาะ.*ไตรมาส/.test(f))return "qn";
+ if(/6 เดือน/.test(f))return /ไม่มีรายปี/.test(f)?"hn":"h";
+ if(/รายปี/.test(f))return "y";
+ return "q";
+}
+function pers(k){return PL[fmo(k)]||PL.q}
 function meta(k){return{tg:k.tg,r:k.r,v:k.v,o:k.o,t:k.t,d:k.d,u:k.u,f:k.f,note:k.note,res:k.res,rl:k.rl,fm:k.fm,g:k.g}}
 var MK=["tg","r","v","o","t","d","u","f","note","res","rl","fm","g"],CE=false,AUTH=true;
 var Q={},SAVING=false,DR={};
@@ -604,8 +627,8 @@ function applyOv(){
  if(adm&&document.activeElement&&document.activeElement.closest&&document.activeElement.closest(".ed"))return;
  render()}
 function editKpi(){var k=DATA[sel];if(!k)return;
- ov('<h3>แก้ไขรายละเอียดตัวชี้วัดที่ '+k.n+'</h3><label>ชื่อตัวชี้วัด</label><input id="ek_kt" value="'+E(k.t)+'"><label>ด้าน</label><select id="ek_kd">'+DOM.map(function(x,i){return'<option value="'+i+'"'+(k.d===i?' selected':'')+'>'+x+'</option>'}).join("")+'</select><label>เกณฑ์ประเมินสถานะ</label><select id="ek_kr">'+RULES.map(function(x){return'<option value="'+x[0]+'"'+(k.r===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join("")+'</select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="ek_kv" type="number" step="any" value="'+(k.r==="lt"||k.r==="le"||k.r==="ge"?k.v:"")+'"><label>เป้าหมายที่แสดง</label><input id="ek_kg" value="'+E(k.tg)+'"><label>หน่วย</label><input id="ek_ku" value="'+E(k.u)+'"><label>หัวข้อหลัก</label><select id="ek_kgp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(gid(k)===x.id?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>รอบการเก็บข้อมูล</label><select id="ek_kfm"><option value="q"'+(fmo(k)==="q"?' selected':'')+'>รายไตรมาส (Q1–Q4 และรายปี)</option><option value="h"'+(fmo(k)==="h"?' selected':'')+'>ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="y"'+(fmo(k)==="y"?' selected':'')+'>รายปี</option></select><label>ผู้รับผิดชอบ</label><input id="ek_ko" value="'+E(k.o)+'"><label>หมายเหตุ</label><input id="ek_kn" value="'+E(k.note)+'"><label>มีช่องกรอกจำนวนที่แก้ไขแล้ว (คำนวณร้อยละ ต้องครบ 100% จึงผ่าน)</label><select id="ek_kres"><option value="0"'+(k.res?'':' selected')+'>ไม่มี</option><option value="1"'+(k.res?' selected':'')+'>มี</option></select><label>ชื่อช่องที่แก้ไขแล้ว</label><input id="ek_krl" value="'+E(k.rl||"จำนวนที่แก้ไขแล้ว")+'"><div class="ac"><button class="pr" id="kds">💾 บันทึก</button><button id="x">ยกเลิก</button></div>',"ek")}
-document.getElementById("dt").addEventListener("click",function(e){if(e.target.id==="edt")editKpi();if(e.target.id==="hadd"){var kk=DATA[sel];HX[kk.n]=(HX[kk.n]||[]).concat([Math.min.apply(null,hlist(kk))-1]);render()}if(e.target.id==="edd"){adm=!adm;render()}if(e.target.id==="bk"){var bk=BACK;view="home";curG=bk?bk.g:"all";adm=false;document.getElementById("ad").classList.remove("on");render();window.scrollTo(0,bk?bk.y:0)}});
+ ov('<h3>แก้ไขรายละเอียดตัวชี้วัดที่ '+k.n+'</h3><label>ชื่อตัวชี้วัด</label><input id="ek_kt" value="'+E(k.t)+'"><label>ด้าน</label><select id="ek_kd">'+DOM.map(function(x,i){return'<option value="'+i+'"'+(k.d===i?' selected':'')+'>'+x+'</option>'}).join("")+'</select><label>เกณฑ์ประเมินสถานะ</label><select id="ek_kr">'+RULES.map(function(x){return'<option value="'+x[0]+'"'+(k.r===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join("")+'</select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="ek_kv" type="number" step="any" value="'+(k.r==="lt"||k.r==="le"||k.r==="ge"?k.v:"")+'"><label>เป้าหมายที่แสดง</label><input id="ek_kg" value="'+E(k.tg)+'"><label>หน่วย</label><input id="ek_ku" value="'+E(k.u)+'"><label>หัวข้อหลัก</label><select id="ek_kgp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(gid(k)===x.id?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>รอบการเก็บข้อมูล</label><select id="ek_kfm"><option value="q"'+(fmo(k)==="q"?' selected':'')+'>รายไตรมาส (Q1–Q4 และรายปี)</option><option value="qn"'+(fmo(k)==="qn"?' selected':'')+'>รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)</option><option value="h"'+(fmo(k)==="h"?' selected':'')+'>ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="hn"'+(fmo(k)==="hn"?' selected':'')+'>ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)</option><option value="y"'+(fmo(k)==="y"?' selected':'')+'>รายปี</option></select><label>ผู้รับผิดชอบ</label><input id="ek_ko" value="'+E(k.o)+'"><label>หมายเหตุ</label><input id="ek_kn" value="'+E(k.note)+'"><label>มีช่องกรอกจำนวนที่แก้ไขแล้ว (คำนวณร้อยละ ต้องครบ 100% จึงผ่าน)</label><select id="ek_kres"><option value="0"'+(k.res?'':' selected')+'>ไม่มี</option><option value="1"'+(k.res?' selected':'')+'>มี</option></select><label>ชื่อช่องที่แก้ไขแล้ว</label><input id="ek_krl" value="'+E(k.rl||"จำนวนที่แก้ไขแล้ว")+'"><div class="ac"><button class="pr" id="kds">💾 บันทึก</button><button id="x">ยกเลิก</button></div>',"ek")}
+document.getElementById("dt").addEventListener("click",function(e){if(e.target.id==="edt")editKpi();if(e.target.id==="hadd"){var kk=DATA[sel];HX[kk.n]=(HX[kk.n]||[]).concat([Math.min.apply(null,hlist(kk))-1]);render()}if(e.target.id==="edd"){adm=!adm;render()}if(e.target.id==="bk"){var bk=BACK;view="home";curG=bk?bk.g:"all";adm=false;clrAd();render();window.scrollTo(0,bk?bk.y:0)}});
 document.getElementById("dt").addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("button[data-m]");if(!b)return;var k=DATA[sel];
  if(!dbc){toast("ยังเชื่อมต่อระบบจัดเก็บข้อมูลไม่ได้ — ต้องล็อกอิน claude.ai ด้วยบัญชีที่มีสิทธิ์");return}
  var rows=k.rows.map(function(r){return r.slice()}),m=b.dataset.m;rows[+b.dataset.r][7]=m==="auto"?null:m;
@@ -623,10 +646,14 @@ document.getElementById("ov").addEventListener("click",function(e){if(e.target.i
  if(!g("ek_kt")){toast("กรอกชื่อตัวชี้วัดก่อน");return}
  var r=g("ek_kr"),v=parseFloat(g("ek_kv"));if((r==="lt"||r==="le"||r==="ge")&&isNaN(v)){toast("ใส่ค่าเป้าหมายตัวเลขสำหรับเกณฑ์นี้");return}
  if(!dbc){toast("ยังเชื่อมต่อระบบจัดเก็บข้อมูลไม่ได้ — ต้องล็อกอิน claude.ai ด้วยบัญชีที่มีสิทธิ์");return}
- var m={t:g("ek_kt"),d:+g("ek_kd"),r:r,v:isNaN(v)?0:v,tg:g("ek_kg")||k.tg,u:g("ek_ku"),f:FML[g("ek_kfm")],fm:g("ek_kfm"),o:g("ek_ko"),note:g("ek_kn"),g:g("ek_kgp"),res:g("ek_kres")==="1",rl:g("ek_krl")||"จำนวนที่แก้ไขแล้ว"};
- dbw(function(){return wr(k,{meta:JSON.stringify(m)})},"k"+k.n).then(function(){Object.assign(k,m);ov(null);toast("บันทึกรายละเอียดแล้ว");render()}).catch(werr)}catch(z){toast("เกิดข้อผิดพลาดในฟอร์ม: "+z.message,6000)}});
+ var chosenFm=g("ek_kfm")||"q";
+ if(chosenFm==="qn"||chosenFm==="hn"){
+  k.rows.forEach(function(r){if(r.length>6)r[6]=null});
+ }
+ var m={t:g("ek_kt"),d:+g("ek_kd"),r:r,v:isNaN(v)?0:v,tg:g("ek_kg")||k.tg,u:g("ek_ku"),f:FML[chosenFm]||"รายไตรมาส",fm:chosenFm,o:g("ek_ko"),note:g("ek_kn"),g:g("ek_kgp"),res:g("ek_kres")==="1",rl:g("ek_krl")||"จำนวนที่แก้ไขแล้ว"};
+ dbw(function(){return wr(k,{meta:JSON.stringify(m),rows:JSON.stringify(k.rows)})},"k"+k.n).then(function(){Object.assign(k,m);ov(null);toast("บันทึกรายละเอียดแล้ว");render()}).catch(werr)}catch(z){toast("เกิดข้อผิดพลาดในฟอร์ม: "+z.message,6000)}});
 function kbtn(i,st){return'<button class="nb kb'+(view==="kpi"&&i===sel?" on":"")+'" data-i="'+i+'"><span class="sd '+st[i].s+'"></span><span class="no">'+cdl(DATA[i])+'</span><span>'+DATA[i].t+'</span></button>'}
-function addKpiForm(gp){ov('<h3>เพิ่มตัวชี้วัด</h3><label>หัวข้อหลัก</label><select id="ngp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(x.id===(gp||curG)?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>ชื่อตัวชี้วัด</label><input id="nt"><label>ด้าน</label><select id="nd2">'+DOM.map(function(x,i){return'<option value="'+i+'">'+x+'</option>'}).join("")+'</select><label>เกณฑ์การประเมินสถานะ</label><select id="nr"><option value="dn">ลดลงจากปี 68 (ต้องกรอกค่าฐาน)</option><option value="up">เพิ่มขึ้นจากปี 68 (ต้องกรอกค่าฐาน)</option><option value="lt">ต่ำกว่าค่าเป้าหมาย</option><option value="le">ไม่เกินค่าเป้าหมาย</option><option value="ge">ไม่น้อยกว่าค่าเป้าหมาย</option><option value="none">ไม่ประเมินอัตโนมัติ</option></select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="nv" type="number" step="any"><label>ข้อความเป้าหมายที่แสดง (เว้นว่าง = สร้างให้อัตโนมัติ)</label><input id="ng"><label>หน่วย</label><input id="nu"><label>รอบการเก็บข้อมูล</label><select id="nfm"><option value="q">รายไตรมาส (Q1–Q4 และรายปี)</option><option value="h">ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="y">รายปี</option></select><label>ผู้รับผิดชอบ</label><input id="no"><label>รายการย่อย เช่น STEMI, Stroke (คั่นด้วยจุลภาค เว้นว่าง = ไม่มี)</label><input id="ns"><div class="ac"><button class="pr" id="nks">บันทึกตัวชี้วัด</button><button id="x">ยกเลิก</button></div>')}
+function addKpiForm(gp){ov('<h3>เพิ่มตัวชี้วัด</h3><label>หัวข้อหลัก</label><select id="ngp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(x.id===(gp||curG)?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>ชื่อตัวชี้วัด</label><input id="nt"><label>ด้าน</label><select id="nd2">'+DOM.map(function(x,i){return'<option value="'+i+'">'+x+'</option>'}).join("")+'</select><label>เกณฑ์การประเมินสถานะ</label><select id="nr"><option value="dn">ลดลงจากปี 68 (ต้องกรอกค่าฐาน)</option><option value="up">เพิ่มขึ้นจากปี 68 (ต้องกรอกค่าฐาน)</option><option value="lt">ต่ำกว่าค่าเป้าหมาย</option><option value="le">ไม่เกินค่าเป้าหมาย</option><option value="ge">ไม่น้อยกว่าค่าเป้าหมาย</option><option value="none">ไม่ประเมินอัตโนมัติ</option></select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="nv" type="number" step="any"><label>ข้อความเป้าหมายที่แสดง (เว้นว่าง = สร้างให้อัตโนมัติ)</label><input id="ng"><label>หน่วย</label><input id="nu"><label>รอบการเก็บข้อมูล</label><select id="nfm"><option value="q">รายไตรมาส (Q1–Q4 และรายปี)</option><option value="qn">รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)</option><option value="h">ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="hn">ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)</option><option value="y">รายปี</option></select><label>ผู้รับผิดชอบ</label><input id="no"><label>รายการย่อย เช่น STEMI, Stroke (คั่นด้วยจุลภาค เว้นว่าง = ไม่มี)</label><input id="ns"><div class="ac"><button class="pr" id="nks">บันทึกตัวชี้วัด</button><button id="x">ยกเลิก</button></div>')}
 // ====== Gorgeous Custom Modal System (Replaces ugly browser prompt) ======
 function showCustomModal(opts){
  var mb=document.getElementById("modal_backdrop");
@@ -741,7 +768,7 @@ function renderAddView(){
 
   '<div><label class="m-label">รอบการเก็บข้อมูล</label>'+
   '<select id="nfm" class="m-input">'+
-  '<option value="q">รายไตรมาส (Q1–Q4 และรายปี)</option><option value="h">ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="y">รายปี</option></select></div>'+
+  '<option value="q">รายไตรมาส (Q1–Q4 และรายปี)</option><option value="qn">รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)</option><option value="h">ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="hn">ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)</option><option value="y">รายปี</option></select></div>'+
 
   '<div><label class="m-label">ผู้รับผิดชอบ / หน่วยงาน</label>'+
   '<input id="no" class="m-input" placeholder="เช่น รองผู้อำนวยการฝ่ายการแพทย์ / กลุ่มงานอายุรกรรม"></div>'+
@@ -1041,7 +1068,7 @@ document.addEventListener("click",function(e){
   return;
  }
 });
-document.getElementById("nd").addEventListener("click",function(){ov(null);adm=false;view="home";curG="all";document.getElementById("ad").classList.remove("on");render();window.scrollTo(0,0)});
+document.getElementById("nd").addEventListener("click",function(){ov(null);adm=false;view="home";curG="all";clrAd();render();window.scrollTo(0,0)});
 document.getElementById("hb").addEventListener("click",function(){document.body.classList.toggle("open")});var thp=document.getElementById("thp");document.getElementById("thb").addEventListener("click",function(e){e.stopPropagation();thp.hidden=!thp.hidden});document.addEventListener("click",function(e){if(!thp.hidden&&!(e.target.closest&&e.target.closest("#thp")))thp.hidden=true});document.addEventListener("keydown",function(e){
  if(e.key==="Escape"){thp.hidden=true}
  if(e.key==="Enter"){
@@ -1063,7 +1090,7 @@ document.getElementById("dt").addEventListener("click",function(e){if(e.target.i
   okText:"ยืนยัน ลบตัวชี้วัด",
   fields:[],
   onOk:function(){
-   adm=false;document.getElementById("ad").classList.remove("on");
+   adm=false;clrAd();
    DB.collection("custom").doc("c"+_kdk.n).delete()
     .then(function(){return DB.collection("kpi").doc("k"+_kdk.n).delete()})
     .then(function(){sel=0;view="home";toast("ลบแล้ว")})

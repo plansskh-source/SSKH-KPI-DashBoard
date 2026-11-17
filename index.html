@@ -281,17 +281,70 @@ function gname(i){if(i==="all")return"ภาพรวมทุกหัวข้
 var PL={
   q:[[2,"Q1"],[3,"Q2"],[4,"Q3"],[5,"Q4"],[6,"รายปี"]],
   qn:[[2,"Q1"],[3,"Q2"],[4,"Q3"],[5,"Q4"]],
+  m:[[10,"ต.ค."],[11,"พ.ย."],[12,"ธ.ค."],[13,"ม.ค."],[14,"ก.พ."],[15,"มี.ค."],[16,"เม.ย."],[17,"พ.ค."],[18,"มิ.ย."],[19,"ก.ค."],[20,"ส.ค."],[21,"ก.ย."],[6,"รายปี"]],
+  mn:[[10,"ต.ค."],[11,"พ.ย."],[12,"ธ.ค."],[13,"ม.ค."],[14,"ก.พ."],[15,"มี.ค."],[16,"เม.ย."],[17,"พ.ค."],[18,"มิ.ย."],[19,"ก.ค."],[20,"ส.ค."],[21,"ก.ย."]],
+  mc:[[13,"ม.ค."],[14,"ก.พ."],[15,"มี.ค."],[16,"เม.ย."],[17,"พ.ค."],[18,"มิ.ย."],[19,"ก.ค."],[20,"ส.ค."],[21,"ก.ย."],[10,"ต.ค."],[11,"พ.ย."],[12,"ธ.ค."],[6,"รายปี"]],
+  mcn:[[13,"ม.ค."],[14,"ก.พ."],[15,"มี.ค."],[16,"เม.ย."],[17,"พ.ค."],[18,"มิ.ย."],[19,"ก.ค."],[20,"ส.ค."],[21,"ก.ย."],[10,"ต.ค."],[11,"พ.ย."],[12,"ธ.ค."]],
   h:[[3,"6 เดือนแรก"],[5,"6 เดือนหลัง"],[6,"รายปี"]],
   hn:[[3,"6 เดือนแรก"],[5,"6 เดือนหลัง"]],
   y:[[6,"รายปี"]]
 },
 FML={
-  q:"รายไตรมาส",
-  qn:"รายไตรมาส (ไม่มีรายปี)",
-  h:"ราย 6 เดือน",
-  hn:"ราย 6 เดือน (ไม่มีรายปี)",
+  q:"รายไตรมาส (Q1–Q4 และรายปี)",
+  qn:"รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)",
+  m:"รายเดือน (12 เดือน: ต.ค.–ก.ย. และรายปี)",
+  mn:"รายเดือน (เฉพาะ 12 เดือน ต.ค.–ก.ย. ไม่มีรายปี)",
+  mc:"รายเดือนตามปีปฏิทิน (ม.ค.–ธ.ค. และรายปี)",
+  mcn:"รายเดือนตามปีปฏิทิน (ม.ค.–ธ.ค. ไม่มีรายปี)",
+  h:"ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)",
+  hn:"ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)",
   y:"รายปี"
 };
+var CUSTOM_FREQ=[];
+try{
+ var cf=JSON.parse(localStorage.getItem("sskh_kpi_custom_freq")||"[]");
+ if(Array.isArray(cf)) CUSTOM_FREQ=cf;
+}catch(e){}
+function getCustomPL(id){
+ var cf=CUSTOM_FREQ.filter(function(x){return x.id===id})[0];
+ if(!cf)return null;
+ var res=[];
+ (cf.periods||[]).forEach(function(lbl,idx){res.push([10+idx,lbl])});
+ if(cf.hasAnnual)res.push([6,"รายปี"]);
+ return res;
+}
+function pers(k){
+ var m=fmo(k);
+ if(PL[m])return PL[m];
+ var cp=getCustomPL(m);
+ if(cp)return cp;
+ return PL.q;
+}
+function getFreqLabel(fm){
+ if(FML[fm])return FML[fm];
+ var cf=CUSTOM_FREQ.filter(function(x){return x.id===fm})[0];
+ if(cf)return cf.name;
+ return fm||"รายไตรมาส";
+}
+function getFreqOptions(selectedFm){
+ var opts=[
+  ["q","รายไตรมาส (Q1–Q4 และรายปี)"],
+  ["qn","รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)"],
+  ["m","รายเดือน (12 เดือน: ต.ค.–ก.ย. และรายปี)"],
+  ["mn","รายเดือน (เฉพาะ 12 เดือน ต.ค.–ก.ย. ไม่มีรายปี)"],
+  ["mc","รายเดือนตามปีปฏิทิน (ม.ค.–ธ.ค. และรายปี)"],
+  ["mcn","รายเดือนตามปีปฏิทิน (ม.ค.–ธ.ค. ไม่มีรายปี)"],
+  ["h","ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)"],
+  ["hn","ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)"],
+  ["y","รายปี"]
+ ];
+ CUSTOM_FREQ.forEach(function(cf){
+  opts.push([cf.id,"✨ "+cf.name+(cf.hasAnnual?" (รวมรายปี)":" (ไม่มีรายปี)")]);
+ });
+ return opts.map(function(o){
+  return '<option value="'+o[0]+'"'+(o[0]===selectedFm?' selected':'')+'>'+o[1]+'</option>';
+ }).join("");
+}
 function isn(v){return typeof v==="number"}
 function lastv(r,k){var o=k?pers(k).map(function(p){return p[0]}):[2,3,4,5,6];for(var i=o.length-1;i>=0;i--)if(isn(r[o[i]]))return r[o[i]];return null}
 function rv(r,i){var a=r[8];if(!a)return null;var x=a[i-2];return isn(x)?x:null}
@@ -497,10 +550,17 @@ function fmo(k){
  var f=k.f||"";
  if(/ไม่มีรายปี/.test(f)||/เฉพาะ.*ไตรมาส/.test(f))return "qn";
  if(/6 เดือน/.test(f))return /ไม่มีรายปี/.test(f)?"hn":"h";
+ if(/รายเดือน/.test(f))return /ไม่มีรายปี/.test(f)?"mn":"m";
  if(/รายปี/.test(f))return "y";
  return "q";
 }
-function pers(k){return PL[fmo(k)]||PL.q}
+function pers(k){
+ var m=fmo(k);
+ if(PL[m])return PL[m];
+ var cp=getCustomPL(m);
+ if(cp)return cp;
+ return PL.q;
+}
 function meta(k){return{tg:k.tg,r:k.r,v:k.v,o:k.o,t:k.t,d:k.d,u:k.u,f:k.f,note:k.note,res:k.res,rl:k.rl,fm:k.fm,g:k.g}}
 var MK=["tg","r","v","o","t","d","u","f","note","res","rl","fm","g"],CE=false,AUTH=true;
 var Q={},SAVING=false,DR={};
@@ -674,7 +734,7 @@ function applyOv(){
  if(adm&&document.activeElement&&document.activeElement.closest&&document.activeElement.closest(".ed"))return;
  render()}
 function editKpi(){var k=DATA[sel];if(!k)return;
- ov('<h3>แก้ไขรายละเอียดตัวชี้วัดที่ '+k.n+'</h3><label>ชื่อตัวชี้วัด</label><input id="ek_kt" value="'+E(k.t)+'"><label>ด้าน</label><select id="ek_kd">'+DOM.map(function(x,i){return'<option value="'+i+'"'+(k.d===i?' selected':'')+'>'+x+'</option>'}).join("")+'</select><label>เกณฑ์ประเมินสถานะ</label><select id="ek_kr">'+getRules().map(function(x){return'<option value="'+x[0]+'"'+(k.r===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join("")+'</select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="ek_kv" type="number" step="any" value="'+(k.r==="lt"||k.r==="le"||k.r==="ge"?k.v:"")+'"><label>เป้าหมายที่แสดง</label><input id="ek_kg" value="'+E(k.tg)+'"><label>หน่วย</label><input id="ek_ku" value="'+E(k.u)+'"><label>หัวข้อหลัก</label><select id="ek_kgp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(gid(k)===x.id?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>รอบการเก็บข้อมูล</label><select id="ek_kfm"><option value="q"'+(fmo(k)==="q"?' selected':'')+'>รายไตรมาส (Q1–Q4 และรายปี)</option><option value="qn"'+(fmo(k)==="qn"?' selected':'')+'>รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)</option><option value="h"'+(fmo(k)==="h"?' selected':'')+'>ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="hn"'+(fmo(k)==="hn"?' selected':'')+'>ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)</option><option value="y"'+(fmo(k)==="y"?' selected':'')+'>รายปี</option></select><label>ผู้รับผิดชอบ</label><input id="ek_ko" value="'+E(k.o)+'"><label>หมายเหตุ</label><input id="ek_kn" value="'+E(k.note)+'"><label>มีช่องกรอกจำนวนที่แก้ไขแล้ว (คำนวณร้อยละ ต้องครบ 100% จึงผ่าน)</label><select id="ek_kres"><option value="0"'+(k.res?'':' selected')+'>ไม่มี</option><option value="1"'+(k.res?' selected':'')+'>มี</option></select><label>ชื่อช่องที่แก้ไขแล้ว</label><input id="ek_krl" value="'+E(k.rl||"จำนวนที่แก้ไขแล้ว")+'"><div class="ac"><button class="pr" id="kds">💾 บันทึก</button><button id="x">ยกเลิก</button></div>',"ek")}
+ ov('<h3>แก้ไขรายละเอียดตัวชี้วัดที่ '+k.n+'</h3><label>ชื่อตัวชี้วัด</label><input id="ek_kt" value="'+E(k.t)+'"><label>ด้าน</label><select id="ek_kd">'+DOM.map(function(x,i){return'<option value="'+i+'"'+(k.d===i?' selected':'')+'>'+x+'</option>'}).join("")+'</select><label>เกณฑ์ประเมินสถานะ</label><select id="ek_kr">'+getRules().map(function(x){return'<option value="'+x[0]+'"'+(k.r===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join("")+'</select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="ek_kv" type="number" step="any" value="'+(k.r==="lt"||k.r==="le"||k.r==="ge"?k.v:"")+'"><label>เป้าหมายที่แสดง</label><input id="ek_kg" value="'+E(k.tg)+'"><label>หน่วย</label><input id="ek_ku" value="'+E(k.u)+'"><label>หัวข้อหลัก</label><select id="ek_kgp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(gid(k)===x.id?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;margin-bottom:3px"><label style="margin:0">รอบการเก็บข้อมูล</label><button type="button" class="eb" id="btn_new_freq_edit" style="margin:0;padding:2px 10px;font-size:.78rem;border-radius:8px;background:var(--nabg)">✨ + เพิ่มรอบใหม่</button></div><select id="ek_kfm">'+getFreqOptions(fmo(k))+'</select><label>ผู้รับผิดชอบ</label><input id="ek_ko" value="'+E(k.o)+'"><label>หมายเหตุ</label><input id="ek_kn" value="'+E(k.note)+'"><label>มีช่องกรอกจำนวนที่แก้ไขแล้ว (คำนวณร้อยละ ต้องครบ 100% จึงผ่าน)</label><select id="ek_kres"><option value="0"'+(k.res?'':' selected')+'>ไม่มี</option><option value="1"'+(k.res?' selected':'')+'>มี</option></select><label>ชื่อช่องที่แก้ไขแล้ว</label><input id="ek_krl" value="'+E(k.rl||"จำนวนที่แก้ไขแล้ว")+'"><div class="ac"><button class="pr" id="kds">💾 บันทึก</button><button id="x">ยกเลิก</button></div>',"ek")}
 document.getElementById("dt").addEventListener("click",function(e){if(e.target.id==="edt")editKpi();if(e.target.id==="hadd"){var kk=DATA[sel];HX[kk.n]=(HX[kk.n]||[]).concat([Math.min.apply(null,hlist(kk))-1]);render()}if(e.target.id==="edd"){adm=!adm;render()}if(e.target.id==="bk"){var bk=BACK;view="home";curG=bk?bk.g:"all";adm=false;clrAd();render();window.scrollTo(0,bk?bk.y:0)}});
 document.getElementById("dt").addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("button[data-m]");if(!b)return;var k=DATA[sel];
  if(!dbc){toast("ยังเชื่อมต่อระบบจัดเก็บข้อมูลไม่ได้ — ต้องล็อกอิน claude.ai ด้วยบัญชีที่มีสิทธิ์");return}
@@ -695,14 +755,14 @@ document.getElementById("ov").addEventListener("click",function(e){if(e.target.i
  var r=g("ek_kr"),v=parseFloat(g("ek_kv"));if((r==="lt"||r==="le"||r==="ge")&&isNaN(v)){toast("ใส่ค่าเป้าหมายตัวเลขสำหรับเกณฑ์นี้");return}
  if(!dbc){toast("ยังเชื่อมต่อระบบจัดเก็บข้อมูลไม่ได้ — ต้องล็อกอิน claude.ai ด้วยบัญชีที่มีสิทธิ์");return}
  var chosenFm=g("ek_kfm")||"q";
- if(chosenFm==="qn"||chosenFm==="hn"){
+ if(false){
   k.rows.forEach(function(r){if(r.length>6)r[6]=null});
  }
- var m={t:g("ek_kt"),d:+g("ek_kd"),r:r,v:isNaN(v)?0:v,tg:g("ek_kg")||k.tg,u:g("ek_ku"),f:FML[chosenFm]||"รายไตรมาส",fm:chosenFm,o:g("ek_ko"),note:g("ek_kn"),g:g("ek_kgp"),res:g("ek_kres")==="1",rl:g("ek_krl")||"จำนวนที่แก้ไขแล้ว"};
+ var cp=getCustomPL(chosenFm),hasAnn=chosenFm==="q"||chosenFm==="h"||chosenFm==="m"||chosenFm==="mc"||chosenFm==="y"||(cp&&cp.some(function(p){return p[0]===6}));if(!hasAnn){k.rows.forEach(function(r){if(r.length>6)r[6]=null})};var m={t:g("ek_kt"),d:+g("ek_kd"),r:r,v:isNaN(v)?0:v,tg:g("ek_kg")||k.tg,u:g("ek_ku"),f:getFreqLabel(chosenFm),fm:chosenFm,o:g("ek_ko"),note:g("ek_kn"),g:g("ek_kgp"),res:g("ek_kres")==="1",rl:g("ek_krl")||"จำนวนที่แก้ไขแล้ว"};
  var saveKey=CURY===2569?"rows":("rows_"+CURY);var saveObj={meta:JSON.stringify(m)};saveObj[saveKey]=JSON.stringify(k.rows);if(CURY===2569)saveObj.rows_2569=JSON.stringify(k.rows);
  dbw(function(){return wr(k,saveObj)},"k"+k.n).then(function(){Object.assign(k,m);if(!KD["k"+k.n])KD["k"+k.n]={};KD["k"+k.n].meta=JSON.stringify(m);KD["k"+k.n][saveKey]=JSON.stringify(k.rows);if(CURY===2569)KD["k"+k.n].rows_2569=JSON.stringify(k.rows);ov(null);toast("บันทึกรายละเอียดแล้ว");render()}).catch(werr)}catch(z){toast("เกิดข้อผิดพลาดในฟอร์ม: "+z.message,6000)}});
 function kbtn(i,st){return'<button class="nb kb'+(view==="kpi"&&i===sel?" on":"")+'" data-i="'+i+'"><span class="sd '+st[i].s+'"></span><span class="no">'+cdl(DATA[i])+'</span><span>'+DATA[i].t+'</span></button>'}
-function addKpiForm(gp){ov('<h3>เพิ่มตัวชี้วัด</h3><label>หัวข้อหลัก</label><select id="ngp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(x.id===(gp||curG)?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>ชื่อตัวชี้วัด</label><input id="nt"><label>ด้าน</label><select id="nd2">'+DOM.map(function(x,i){return'<option value="'+i+'">'+x+'</option>'}).join("")+'</select><label>เกณฑ์การประเมินสถานะ</label><select id="nr"><option value="dn">ลดลงจากปี '+(baseY()%100)+' (ต้องกรอกค่าฐาน)</option><option value="up">เพิ่มขึ้นจากปี '+(baseY()%100)+' (ต้องกรอกค่าฐาน)</option><option value="lt">ต่ำกว่าค่าเป้าหมาย</option><option value="le">ไม่เกินค่าเป้าหมาย</option><option value="ge">ไม่น้อยกว่าค่าเป้าหมาย</option><option value="none">ไม่ประเมินอัตโนมัติ</option></select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="nv" type="number" step="any"><label>ข้อความเป้าหมายที่แสดง (เว้นว่าง = สร้างให้อัตโนมัติ)</label><input id="ng"><label>หน่วย</label><input id="nu"><label>รอบการเก็บข้อมูล</label><select id="nfm"><option value="q">รายไตรมาส (Q1–Q4 และรายปี)</option><option value="qn">รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)</option><option value="h">ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="hn">ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)</option><option value="y">รายปี</option></select><label>ผู้รับผิดชอบ</label><input id="no"><label>รายการย่อย เช่น STEMI, Stroke (คั่นด้วยจุลภาค เว้นว่าง = ไม่มี)</label><input id="ns"><div class="ac"><button class="pr" id="nks">บันทึกตัวชี้วัด</button><button id="x">ยกเลิก</button></div>')}
+function addKpiForm(gp){ov('<h3>เพิ่มตัวชี้วัด</h3><label>หัวข้อหลัก</label><select id="ngp">'+GRP.map(function(x){return'<option value="'+x.id+'"'+(x.id===(gp||curG)?' selected':'')+'>'+x.n+'</option>'}).join("")+'</select><label>ชื่อตัวชี้วัด</label><input id="nt"><label>ด้าน</label><select id="nd2">'+DOM.map(function(x,i){return'<option value="'+i+'">'+x+'</option>'}).join("")+'</select><label>เกณฑ์การประเมินสถานะ</label><select id="nr"><option value="dn">ลดลงจากปี '+(baseY()%100)+' (ต้องกรอกค่าฐาน)</option><option value="up">เพิ่มขึ้นจากปี '+(baseY()%100)+' (ต้องกรอกค่าฐาน)</option><option value="lt">ต่ำกว่าค่าเป้าหมาย</option><option value="le">ไม่เกินค่าเป้าหมาย</option><option value="ge">ไม่น้อยกว่าค่าเป้าหมาย</option><option value="none">ไม่ประเมินอัตโนมัติ</option></select><label>ค่าเป้าหมาย (ตัวเลข ใช้กับเกณฑ์ต่ำกว่า/ไม่เกิน/ไม่น้อยกว่า)</label><input id="nv" type="number" step="any"><label>ข้อความเป้าหมายที่แสดง (เว้นว่าง = สร้างให้อัตโนมัติ)</label><input id="ng"><label>หน่วย</label><input id="nu"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:9px;margin-bottom:3px"><label style="margin:0">รอบการเก็บข้อมูล</label><button type="button" class="eb" id="btn_new_freq_dlg" style="margin:0;padding:2px 10px;font-size:.78rem;border-radius:8px;background:var(--nabg)">✨ + เพิ่มรอบใหม่</button></div><select id="nfm">'+getFreqOptions("q")+'</select><label>ผู้รับผิดชอบ</label><input id="no"><label>รายการย่อย เช่น STEMI, Stroke (คั่นด้วยจุลภาค เว้นว่าง = ไม่มี)</label><input id="ns"><div class="ac"><button class="pr" id="nks">บันทึกตัวชี้วัด</button><button id="x">ยกเลิก</button></div>')}
 // ====== Gorgeous Custom Modal System (Replaces ugly browser prompt) ======
 function showCustomModal(opts){
  var mb=document.getElementById("modal_backdrop");
@@ -815,9 +875,8 @@ function renderAddView(){
   '<div><label class="m-label">หน่วยวัด (Unit)</label>'+
   '<input id="nu" class="m-input" placeholder="เช่น %, นาที, ราย, ต่อแสน"></div>'+
 
-  '<div><label class="m-label">รอบการเก็บข้อมูล</label>'+
-  '<select id="nfm" class="m-input">'+
-  '<option value="q">รายไตรมาส (Q1–Q4 และรายปี)</option><option value="qn">รายไตรมาส (เฉพาะ Q1–Q4 ไม่มีรายปี)</option><option value="h">ราย 6 เดือน (6 เดือนแรก, 6 เดือนหลัง และรายปี)</option><option value="hn">ราย 6 เดือน (เฉพาะ 6 เดือนแรก, 6 เดือนหลัง ไม่มีรายปี)</option><option value="y">รายปี</option></select></div>'+
+  '<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label class="m-label" style="margin:0">รอบการเก็บข้อมูล</label><button type="button" class="eb" id="btn_new_freq_add" style="margin:0;padding:2px 10px;font-size:.78rem;border-radius:8px;background:var(--card)">✨ + เพิ่มรอบใหม่</button></div>'+
+  '<select id="nfm" class="m-input">'+getFreqOptions("q")+'</select></div>'+
 
   '<div><label class="m-label">ผู้รับผิดชอบ / หน่วยงาน</label>'+
   '<input id="no" class="m-input" placeholder="เช่น รองผู้อำนวยการฝ่ายการแพทย์ / กลุ่มงานอายุรกรรม"></div>'+
@@ -977,7 +1036,49 @@ if(nkBtnEl){
  });
 }
 
+function openNewFreqModal(targetSelectId){
+ showCustomModal({
+  icon:"⏱️",
+  title:"เพิ่มรอบการเก็บข้อมูลใหม่",
+  desc:"กำหนดชื่อรอบ เช่น รายเดือน, ราย 2 เดือน, รายสัปดาห์ พร้อมระบุชื่อช่วงเวลาย่อย",
+  okText:"สร้างรอบใหม่",
+  fields:[
+   {label:"ชื่อรอบการเก็บข้อมูล",placeholder:"เช่น รายเดือน (ต.ค.-ก.ย.), ราย 2 เดือน, รายสัปดาห์"},
+   {label:"ช่วงเวลาย่อย (คั่นด้วยเครื่องหมายจุลภาค , )",placeholder:"เช่น ต.ค., พ.ย., ธ.ค., ม.ค., ก.พ., มี.ค., เม.ย., พ.ค., มิ.ย., ก.ค., ส.ค., ก.ย."},
+   {label:"รวมผลงานรายปีด้วยหรือไม่",type:"select",value:"1",options:[["1","มีช่องผลรวมทั้งปี (รายปี)"],["0","ไม่มีช่องรายปี (เฉพาะช่วงเวลาย่อย)"]]}
+  ],
+  onOk:function(vals){
+   var name=vals[0].trim();
+   var periodsStr=vals[1].trim();
+   var hasAnn=vals[2]==="1";
+   if(!name){toast("กรุณาระบุชื่อรอบการเก็บข้อมูลก่อน");return false}
+   if(!periodsStr){toast("กรุณาระบุช่วงเวลาย่อยอย่างน้อย 1 ช่วง");return false}
+   var periods=periodsStr.split(/[,、\n]/).map(function(s){return s.trim()}).filter(Boolean);
+   if(!periods.length){toast("กรุณาระบุช่วงเวลาย่อยอย่างน้อย 1 ช่วง");return false}
+   var newId="cf_"+Date.now();
+   var newFreqObj={id:newId,name:name,periods:periods,hasAnnual:hasAnn};
+   CUSTOM_FREQ.push(newFreqObj);
+   try{localStorage.setItem("sskh_kpi_custom_freq",JSON.stringify(CUSTOM_FREQ))}catch(z){}
+   if(typeof DB!=="undefined"&&DB&&DB.collection){
+    try{DB.collection("custom_freq").doc(newId).set(newFreqObj)}catch(z){}
+   }
+   if(targetSelectId){
+    var selEl=document.getElementById(targetSelectId);
+    if(selEl){
+     selEl.innerHTML=getFreqOptions(newId);
+    }
+   }
+   toast("เพิ่มรอบการเก็บข้อมูล '"+name+"' เรียบร้อยแล้ว ✨");
+  }
+ });
+}
+
 document.addEventListener("click",function(e){
+ if(e.target&&(e.target.id==="btn_new_freq_edit"||e.target.id==="btn_new_freq_add"||e.target.id==="btn_new_freq_dlg")){
+  var tid = e.target.id==="btn_new_freq_edit" ? "ek_kfm" : "nfm";
+  openNewFreqModal(tid);
+  return;
+ }
  if(e.target&&(e.target.id==="btn_cancel_add"||e.target.id==="btn_cancel_add2")){
   view="home";render();window.scrollTo(0,0);return;
  }
@@ -1097,7 +1198,7 @@ document.addEventListener("click",function(e){
    v:hv?v:0,
    tg:tg,
    o:g("no").trim()||"-",
-   f:FML[g("nfm")]||"รายไตรมาส",
+   f:getFreqLabel(g("nfm")),
    fm:g("nfm")||"q",
    u:g("nu").trim(),
    note:"",
@@ -1564,6 +1665,18 @@ document.addEventListener("click",function(e){
     render();
    },function(err){
     console.warn("Firebase custom onSnapshot error:",err);
+   });
+
+   fdb.collection("custom_freq").onSnapshot(function(sn){
+    sn.docs.forEach(function(d){
+     var fData=d.data();
+     if(fData&&fData.id&&!CUSTOM_FREQ.some(function(x){return x.id===fData.id})){
+      CUSTOM_FREQ.push(fData);
+     }
+    });
+    try{localStorage.setItem("sskh_kpi_custom_freq",JSON.stringify(CUSTOM_FREQ))}catch(z){}
+   },function(err){
+    console.warn("Firebase custom_freq onSnapshot error:",err);
    });
 
    nav();

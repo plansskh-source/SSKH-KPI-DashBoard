@@ -47,7 +47,8 @@ svg{max-width:100%}.dt svg{width:100%;height:auto}svg text{font-family:'Sarabun'
 .empty{padding:28px 0;text-align:center;color:var(--mu);font-size:.82rem}
 .ed{margin-top:12px;overflow-x:auto}.ed table{min-width:420px}.ed table.ht{min-width:unset!important;max-width:360px}.ed input{width:100%;min-width:56px;font:inherit;font-size:.85rem;padding:6px 7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
 .ed th{position:static}.ac{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.ac button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:7px 15px;cursor:pointer}.ac .pr{background:linear-gradient(135deg,var(--ac2),var(--ac));color:#fff;border-color:transparent}
-.eb{font:inherit;font-size:.8rem;border:1px solid var(--ac);color:var(--ac);background:transparent;border-radius:10px;padding:4px 12px;cursor:pointer;margin-top:8px}
+.eb{font:inherit;font-size:.84rem;font-weight:600;border:1.5px solid var(--ac);color:var(--tx);background:var(--card);border-radius:12px;padding:6px 14px;cursor:pointer;margin-top:8px;box-shadow:0 3px 10px -2px rgba(0,0,0,.14);display:inline-flex;align-items:center;gap:6px;transition:all .2s ease}
+.eb:hover{background:linear-gradient(135deg,var(--ac2),var(--ac));color:#fff;border-color:transparent;box-shadow:0 6px 18px -3px var(--ac);transform:translateY(-1px)}
 #ov{position:fixed;inset:0;background:rgba(10,16,28,.55);display:grid;place-items:center;padding:16px;z-index:50}#ov[hidden]{display:none}.md{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:18px;padding:18px;width:min(520px,100%);max-height:86vh;overflow:auto}.md h3{margin:0 0 8px}.md label{display:block;font-size:.8rem;color:var(--mu);margin:9px 0 3px}.md input{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}.rq{border:1px solid var(--bd);border-radius:12px;padding:9px 11px;margin-top:8px;font-size:.85rem}.app{display:flex;min-height:100vh}main{flex:1;min-width:0}
 #sb{width:290px;flex:none;background:var(--card);border-right:1px solid var(--bd);padding:18px 12px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;box-sizing:border-box}
 .sb-main{flex:1;overflow-y:auto;min-height:0;padding-right:2px}
@@ -94,15 +95,415 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 .m-btn-primary:hover{filter:brightness(1.08)}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 
-/* Fiscal Year Filter Switcher */
-.yf-wrap{display:flex;align-items:center;background:var(--nabg);border:1px solid var(--bd);border-radius:12px;padding:3px;gap:2px;margin:0 10px}
-.yf-lbl{font-size:.78rem;font-weight:700;color:var(--mu);padding:0 4px 0 6px}
-.yf-btn{font:inherit;font-size:.82rem;font-weight:700;padding:5px 12px;border-radius:9px;border:0;background:transparent;color:var(--tx);cursor:pointer;transition:all .15s}
-.yf-btn:hover{background:var(--card)}
-.yf-btn.on{background:linear-gradient(135deg,var(--ac2),var(--ac));color:#fff;box-shadow:0 3px 10px -2px var(--ac)}
-.sb-year-box .yf-btn{background:var(--nabg);border:1px solid var(--bd)}
-.sb-year-box .yf-btn.on{background:linear-gradient(135deg,var(--ac2),var(--ac));color:#fff;border-color:transparent}
+/* ========================================================
+   LIQUID GLASS STYLING FOR CIRCLED MENU ITEMS
+   ======================================================== */
+
+/* 1. Fiscal Year Switcher (.sb-year-box & .yf-wrap) - Liquid Glass Capsule */
+.sb-year-box {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0 16px;
+  padding: 5px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.25), inset 0 0 1px 1px rgba(255, 255, 255, 0.08), 0 6px 18px -4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.sb-year-box .yf-btn {
+  flex: 1;
+  justify-content: center;
+  padding: 8px 0;
+  font-weight: 700;
+  font-size: .86rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--mu);
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.16, 1, .3, 1);
+}
+.sb-year-box .yf-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--tx);
+}
+.sb-year-box .yf-btn.on {
+  background: linear-gradient(135deg, var(--ac2), var(--ac));
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.65), inset 0 -1.5px 3px rgba(0, 0, 0, 0.22), 0 6px 20px -3px var(--ac);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+.sb-year-box .yf-btn.on::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: 12px 12px 30px 30px / 12px 12px 8px 8px;
+  pointer-events: none;
+}
+
+/* Header Year Filter (.yf-wrap) - Matching Liquid Glass */
+.yf-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1.2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 20px;
+  padding: 4px 6px;
+  gap: 3px;
+  box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.55), inset 0 -1px 2px rgba(0, 0, 0, 0.15), 0 6px 20px -4px rgba(0, 0, 0, 0.25);
+}
+.yf-wrap .yf-lbl {
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 0 6px;
+}
+.yf-wrap .yf-btn {
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.yf-wrap .yf-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.yf-wrap .yf-btn.on {
+  background: #fff;
+  color: var(--ac2);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 1px 1px #fff, 0 4px 14px rgba(0, 0, 0, 0.2);
+  font-weight: 800;
+}
 @media (max-width:680px){.yf-wrap{margin:0 4px;padding:2px}.yf-lbl{display:none}.yf-btn{padding:4px 8px;font-size:.76rem}}
+
+/* 2. Main Navigation Button (#nd - แดชบอร์ดรวม & .nb.on) - Liquid Glass Slab */
+#nd, .nb {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: all .25s cubic-bezier(.16, 1, .3, 1);
+}
+#nd.on, .nb.on {
+  background: linear-gradient(135deg, var(--ac2), var(--ac));
+  color: #fff !important;
+  border: 1.2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 14px;
+  box-shadow: inset 0 2px 2.5px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 4px 0 rgba(0, 0, 0, 0.25), 0 8px 24px -5px var(--ac);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
+}
+#nd.on::after, .nb.on::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: 14px 14px 60px 60px / 14px 14px 16px 16px;
+  pointer-events: none;
+}
+#nd:not(.on):hover, .nb:not(.on):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateX(4px);
+}
+
+/* 3. Group Accordion Headers (.gh) - Translucent Liquid Glass Bar */
+.gh {
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  font-size: .95rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.2px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 16px -4px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  color: var(--tx);
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.16, 1, .3, 1);
+}
+.gh::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border-radius: 15px 15px 60px 60px / 15px 15px 16px 16px;
+  pointer-events: none;
+}
+.gh:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.5), 0 8px 22px -4px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px) translateX(2px);
+}
+.gh.open {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+  border: 1.5px solid var(--ac);
+  box-shadow: inset 0 1.5px 2.5px 0 rgba(255, 255, 255, 0.45), 0 8px 24px -4px var(--ac);
+}
+.gh .chev {
+  display: inline-block;
+  transition: transform .25s;
+  font-size:.82rem;
+  color: var(--ac);
+}
+.gh.open .chev {
+  transform: rotate(90deg);
+}
+.gh .nm {
+  flex: 1;
+  text-align: left;
+  line-height: 1.35;
+}
+.gh .cnt {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--tx);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: .78rem;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 4. Top-Right Header Buttons (#lgb & #thb) - Floating Liquid Glass Capsules */
+#lgb {
+  position: absolute;
+  right: 58px;
+  top: 50%;
+  transform: translateY(-50%);
+  font: inherit;
+  font-size: .95rem;
+  font-weight: 700;
+  padding: 0 20px;
+  height: 46px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1.4px solid rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 2px 2px 0 rgba(255, 255, 255, 0.8), inset 0 -1.5px 3px 0 rgba(0, 0, 0, 0.2), 0 8px 24px -4px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  white-space: nowrap;
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .25s cubic-bezier(.16, 1, .3, 1);
+}
+#thb {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1.4px solid rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 2px 2px 0 rgba(255, 255, 255, 0.8), inset 0 -1.5px 3px 0 rgba(0, 0, 0, 0.2), 0 8px 24px -4px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .25s cubic-bezier(.16, 1, .3, 1);
+}
+#lgb::after, #thb::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+#lgb:hover, #thb:hover {
+  background: rgba(255, 255, 255, 0.36);
+  border-color: #fff;
+  box-shadow: inset 0 2.5px 3px 0 #fff, inset 0 -2px 4px 0 rgba(0, 0, 0, 0.22), 0 12px 28px -4px rgba(0, 0, 0, 0.35);
+  transform: translateY(-53%) scale(1.04);
+}
+#lgb:active, #thb:active {
+  transform: translateY(-48%) scale(0.97);
+}
+:root[data-accent="pink"] #lgb, :root[data-accent="pink"] #thb {
+  color: #4a1d7a;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1.4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 2px 2px 0 #fff, inset 0 -1.5px 3px 0 rgba(74, 29, 122, 0.15), 0 8px 24px -4px rgba(74, 29, 122, 0.25);
+}
+:root[data-accent="pink"] #lgb:hover, :root[data-accent="pink"] #thb:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #fff;
+}
+
+/* Quick Search Bar */
+.sb-search-box{position:relative;margin:4px 0 10px}
+.sb-search-box input{width:100%;padding:7px 28px 7px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:.82rem;outline:none;box-sizing:border-box;transition:border-color .15s}
+.sb-search-box input:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(255,107,0,.18)}
+.sb-search-box .clear-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mu);cursor:pointer;font-size:.85rem;padding:2px 4px;line-height:1}
+.sb-search-box .clear-btn:hover{color:var(--tx)}
+
+/* Executive Action Buttons & Print Controls - High contrast & Theme-responsive */
+#btn_print_overview, #btn_print_kpi {
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--tx);
+  border: 2px solid var(--ac);
+  box-shadow: 0 4px 16px -2px rgba(0,0,0,.18), 0 0 10px -2px var(--ac);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  transition: all .2s cubic-bezier(.16,1,.3,1);
+}
+#btn_print_overview:hover, #btn_print_kpi:hover {
+  background: linear-gradient(135deg, var(--ac2), var(--ac));
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px var(--ac);
+}
+#btn_print_overview .p-icon, #btn_print_kpi .p-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--ac2), var(--ac));
+  color: #fff;
+  font-size: .85rem;
+  box-shadow: 0 2px 6px -1px var(--ac);
+  transition: all .2s ease;
+}
+#btn_print_overview:hover .p-icon, #btn_print_kpi:hover .p-icon {
+  background: #fff;
+  color: var(--ac);
+  transform: scale(1.12);
+}
+
+/* Header Quick Backup Button */
+#btn_quick_backup {
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .22);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, .2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+  transition: all .2s ease;
+}
+#btn_quick_backup:hover {
+  background: rgba(255, 255, 255, .38);
+  border-color: rgba(255, 255, 255, .8);
+  transform: translateY(-1px);
+}
+:root[data-accent="pink"] #btn_quick_backup {
+  color: #4a1d7a;
+  background: rgba(255, 255, 255, .65);
+  border-color: rgba(255, 255, 255, .85);
+}
+:root[data-accent="pink"] #btn_quick_backup:hover {
+  background: rgba(255, 255, 255, .85);
+}
+
+/* Back Buttons (#crb, #bk, #btn_back_dash) */
+#crb, #bk, #btn_back_dash {
+  font-weight: 700;
+  border: 1.5px solid var(--ac);
+  background: var(--card);
+  color: var(--tx);
+  box-shadow: 0 3px 12px -2px rgba(0,0,0,.15);
+}
+#crb:hover, #bk:hover, #btn_back_dash:hover {
+  background: linear-gradient(135deg, var(--ac2), var(--ac));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 18px -3px var(--ac);
+}
+
+/* Print Banner for Screen (hidden) and Print (visible) */
+.print-header{display:none}
+@media print{
+ @page{size:A4 portrait;margin:10mm 12mm 12mm 12mm}
+ body{background:#fff!important;color:#000!important;font-size:11pt!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #sb,header,#thb,#hb,#lgb,#bk,#edd,#edt,#btn_print_overview,#btn_print_kpi,#btn_quick_backup,#up,#toast,.ft,.tabs,.sb-search-box,.yf-wrap,.seg,.ac,.eb:not(.keep-print){display:none!important}
+ .app{display:block!important}
+ main{margin:0!important;padding:0!important;width:100%!important;max-width:100%!important}
+ .w{padding:0!important;max-width:100%!important}
+ .c{background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;color:#000!important;break-inside:avoid;page-break-inside:avoid;margin-bottom:12px!important}
+ .print-header{display:block!important;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #333}
+ .print-header h2{font-size:16pt;margin:0 0 4px;color:#111}
+ .print-header .meta{font-size:9.5pt;color:#555}
+ table{width:100%!important;border-collapse:collapse!important;font-size:9.5pt!important}
+ th,td{border:1px solid #ddd!important;padding:5px 8px!important;color:#000!important}
+ th{background:#f3f4f6!important;font-weight:700!important}
+ .chip,.sd{border:1px solid #999!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ svg text{fill:#000!important}
+ svg rect,svg circle{opacity:1!important}
+}
 </style>
 <!-- Firebase SDK (Real-time Cloud Database) -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -114,12 +515,19 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 <div class="sb-main">
 <div class="lg2">🏥 SSKH-KPI+</div>
 <div class="sec">ปีงบประมาณ</div>
-<div class="sb-year-box" style="display:flex;gap:6px;margin:4px 0 14px">
-<button class="nb yf-btn" data-yr="2569" style="flex:1;justify-content:center;padding:7px 0;font-weight:700">ปี 69</button>
-<button class="nb yf-btn" data-yr="2570" style="flex:1;justify-content:center;padding:7px 0;font-weight:700">ปี 70</button>
+<div class="sb-year-box">
+<button class="nb yf-btn" data-yr="2569">ปี 69</button>
+<button class="nb yf-btn" data-yr="2570">ปี 70</button>
 </div>
 <div class="sec">เมนู</div><button class="nb on" id="nd">📊 แดชบอร์ดรวม</button>
-<div class="sec" style="margin-top:14px">กลุ่มตัวชี้วัด</div>
+<div class="sec" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
+<span>กลุ่มตัวชี้วัด</span>
+<span id="kpi_search_cnt" style="font-size:.72rem;color:var(--mu);font-weight:400"></span>
+</div>
+<div class="sb-search-box">
+<input id="kpi_search" type="text" placeholder="🔍 ค้นหาด่วน... (กด /)" autocomplete="off">
+<button id="kpi_search_clear" class="clear-btn" style="display:none" title="ล้างการค้นหา">✕</button>
+</div>
 <div id="kl"></div>
 </div>
 <div class="sb-foot">
@@ -132,7 +540,20 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 <main>
 <header><div class="hi"><div style="display:flex;align-items:center"><button id="hb" aria-label="เปิดเมนู">☰</button><div><h1><span class="t1">SSKH</span><span class="t2">-KPI+</span> <span class="t3">Dashboard</span></h1></div></div><div class="yf-wrap"><span class="yf-lbl">ปีงบ</span><button class="yf-btn" data-yr="2569">2569</button><button class="yf-btn" data-yr="2570">2570</button></div><button id="lgb">🔑 เข้าสู่ระบบ</button><button id="thb" aria-label="ตัวเลือก: ธีมและสมัครทีมงาน" title="ธีมและตัวเลือก">☰</button></div></header>
 <div class="w">
-<div id="home"><div id="crumb"></div><div class="hero" id="sum"></div>
+<div id="home">
+<div class="print-header" id="print_head_home">
+ <div style="display:flex;justify-content:space-between;align-items:flex-start">
+  <div>
+   <h2>🏥 โรงพยาบาลศรีสะเกษ · สรุปภาพรวมตัวชี้วัด SSKH-KPI+</h2>
+   <div class="meta" id="print_meta_home">ปีงบประมาณ 2569 · พิมพ์รายงานเมื่อ วันที่ ...</div>
+  </div>
+ </div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+ <div id="crumb"></div>
+ <button class="eb" id="btn_print_overview"><span class="p-icon">🖨️</span><span>พิมพ์สรุปภาพรวม / PDF</span></button>
+</div>
+<div class="hero" id="sum"></div>
 <div class="row r3" id="dom"></div>
 <div class="ch2" id="ch"></div>
 <h2>ตัวชี้วัดทั้งหมด <span id="h2hint" style="font-weight:400;font-size:.8rem;color:var(--mu)">· เลือกตัวชี้วัดจากเมนูซ้ายหรือคลิกแถวในตาราง</span></h2>
@@ -146,7 +567,8 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 </main></div>
 <div id="thp" hidden><div class="thh">☰ ตัวเลือก</div><button class="nb" id="lgp" style="margin-bottom:10px">🔑 เข้าสู่ระบบ</button><div class="thh" style="font-weight:600;font-size:.85rem;color:var(--mu)">🎨 ธีม</div><div class="sw" id="sw"></div><button class="nb" id="md" style="margin-top:8px"></button><button class="nb" id="rg" hidden style="margin-top:8px">📝 สมัครสมาชิก</button><button class="nb" id="pm" hidden style="margin-top:8px">👥 จัดการทีมงาน</button>
 <div class="thh" style="font-weight:600;font-size:.85rem;color:var(--mu);margin-top:10px">💾 จัดการข้อมูล</div>
-<button class="nb" id="btn_dm_hub2" style="margin-top:4px;color:var(--ac);font-weight:600">📋 ศูนย์จัดการข้อมูลทั้งหมด</button>
+<button class="nb" id="btn_quick_backup_thp" style="margin-top:4px;color:var(--ac);font-weight:700">💾 สำรองข้อมูลด่วน (Full Backup)</button>
+<button class="nb" id="btn_dm_hub2" style="margin-top:4px;color:var(--tx);font-weight:600">📋 ศูนย์จัดการข้อมูลทั้งหมด</button>
 <button class="nb" id="btn_sync2" style="margin-top:4px">🔄 ซิงค์ Google Sheets</button>
 <button class="nb" id="btn_exp2" style="margin-top:4px">📤 ส่งออกข้อมูล (JSON/CSV)</button>
 <button class="nb" id="btn_imp2" style="margin-top:4px">📥 นำเข้าข้อมูล (JSON/CSV)</button>
@@ -158,6 +580,22 @@ header h1 .t1,header h1 .t2{text-shadow:0 0 10px rgba(var(--glc),.95),0 0 24px r
 <script>
 var W="กำลังดำเนินการ",DOM=["ด้านการแพทย์","ด้านการสาธารณสุข","ด้านการบริหารจัดการ"];
 try{var customDom=JSON.parse(localStorage.getItem("sskh_kpi_custom_dom")||"[]");if(Array.isArray(customDom)){customDom.forEach(function(d){if(DOM.indexOf(d)===-1)DOM.push(d)})}}catch(e){}
+var SRCH="";
+function kMatch(k,q){
+ if(!q)return true;
+ q=q.trim().toLowerCase();
+ if(!q)return true;
+ if(String(k.n||"").toLowerCase().indexOf(q)!==-1)return true;
+ if(String(k.cd||"").toLowerCase().indexOf(q)!==-1)return true;
+ if(String(k.oc||"").toLowerCase().indexOf(q)!==-1)return true;
+ if(String(k.t||"").toLowerCase().indexOf(q)!==-1)return true;
+ if(String(k.tg||"").toLowerCase().indexOf(q)!==-1)return true;
+ if(String(k.o||"").toLowerCase().indexOf(q)!==-1)return true;
+ if(k.note&&String(k.note).toLowerCase().indexOf(q)!==-1)return true;
+ if(DOM[k.d]&&DOM[k.d].toLowerCase().indexOf(q)!==-1)return true;
+ if(k.rows&&k.rows.some(function(r){return r&&r[0]&&String(r[0]).toLowerCase().indexOf(q)!==-1}))return true;
+ return false;
+}
 var SRC="ข้อมูลจากไฟล์ \"ตารางติดตามตัวชี้วัด รพ. ปี 69\" (Google Sheets, แท็บ ตัวชี้วัด รพ.69) · ผลถึงไตรมาส 3/69 · ข้อมูล ณ 19 ต.ค. 2569";
 // n,title,domain,rule,ruleVal,target,owner,freq,unit,note,rows:[label,base,Q1,Q2,Q3,FY]
 function R(l,b,q1,q2,q3,fy){return [l,b,q1,q2,q3,null,fy]}
@@ -459,21 +897,38 @@ function render(){if(!AUTH){view="home";curG="all"}
  document.getElementById("tabs").innerHTML=NDG?"":tb;
  document.getElementById("crumb").innerHTML=ALL?"":'<button class="eb" id="crb" style="margin:0 14px 14px 0;font-size:.95rem;padding:7px 16px">← กลับแดชบอร์ดรวม</button><span class="gt2">'+gfull(G)+'</span>';
  if(!GN){document.getElementById("sum").innerHTML='<div class="c" style="grid-column:1/-1;text-align:center;padding:42px 20px"><div style="font-size:3rem">📋</div><h3 style="margin-top:6px">ยังไม่มีตัวชี้วัดในหัวข้อนี้</h3><div class="sb2">'+gname(G)+'</div>'+(CE?'<button class="eb" id="gadd" style="margin-top:16px">➕ เพิ่มตัวชี้วัด</button>':'<div class="sb2" style="margin-top:10px">ผู้ดูแลสามารถเพิ่มตัวชี้วัดได้จากเมนูงานหลังบ้าน</div>')+'</div>';document.getElementById("dom").innerHTML="";document.getElementById("ch").innerHTML=""}
- var kl="";GRP.forEach(function(G2){var ids=[];DATA.forEach(function(k,i){if(gid(k)===G2.id)ids.push(i)});var op=!!OPEN[G2.id];
+ var hasSearch=!!(SRCH&&SRCH.trim());
+ var totalMatched=0;
+ var kl="";GRP.forEach(function(G2){var ids=[];
+  DATA.forEach(function(k,i){
+   if(gid(k)===G2.id){
+    if(!hasSearch||kMatch(k,SRCH)){
+     ids.push(i);
+     if(hasSearch)totalMatched++;
+    }
+   }
+  });
+  var op=hasSearch?(ids.length>0):!!OPEN[G2.id];
   kl+='<button class="nb gh'+(op?' open':'')+'" data-g="'+G2.id+'"><span class="chev">▸</span><span class="nm">'+G2.i+' '+G2.n+'</span><span class="cnt">'+ids.length+'</span></button>';
   if(op){kl+='<div class="gb"><button class="nb kb gov'+(view==="home"&&curG===G2.id?' on':'')+'" data-ov="'+G2.id+'">📊 ภาพรวม</button>';
-   if(!ids.length)kl+='<div class="gempty">ยังไม่มีตัวชี้วัด · เพิ่มได้จากเมนู "เพิ่มตัวชี้วัด"</div>';
+   if(!ids.length)kl+='<div class="gempty">'+(hasSearch?'ไม่พบตัวชี้วัดที่ตรงกับคำค้น':'ยังไม่มีตัวชี้วัด · เพิ่มได้จากเมนู "เพิ่มตัวชี้วัด"')+'</div>';
    if(G2.nd)ids.forEach(function(i){kl+=kbtn(i,st)});else for(var d2=0;d2<3;d2++){var an=ids.filter(function(i){return DATA[i].d===d2});if(!an.length)continue;kl+='<div class="sec">'+DOM[d2]+'</div>';an.forEach(function(i){kl+='<button class="nb kb'+(view==="kpi"&&i===sel?" on":"")+'" data-i="'+i+'"><span class="sd '+st[i].s+'"></span><span class="no">'+cdl(DATA[i])+'</span><span>'+DATA[i].t+'</span></button>'})}
    kl+='</div>'}});
  document.getElementById("kl").innerHTML=AUTH?kl:'<div class="lockc">🔒 <b>เข้าสู่ระบบเพื่อดูรายละเอียดตัวชี้วัด</b><br>ผู้ที่ยังไม่ได้เข้าสู่ระบบดูได้เฉพาะแดชบอร์ดรวม<a class="lk" href="https://claude.ai/login" target="_blank" rel="noopener">เข้าสู่ระบบ claude.ai ›</a><div class="sb2" style="margin-top:8px">เข้าสู่ระบบแล้วกลับมาเปิดลิงก์นี้อีกครั้ง</div></div>';document.body.classList.toggle("anon",!AUTH);if(!AUTH)document.getElementById("ro").hidden=true;document.getElementById("h2hint").textContent=AUTH?"· เลือกตัวชี้วัดจากเมนูซ้ายหรือคลิกแถวในตาราง":"· เข้าสู่ระบบเพื่อดูรายละเอียดรายตัว";
+ var sCnt=document.getElementById("kpi_search_cnt");if(sCnt)sCnt.textContent=hasSearch?(totalMatched+" รายการ"):"";
+ var sClr=document.getElementById("kpi_search_clear");if(sClr)sClr.style.display=hasSearch?"block":"none";
  var out="";GRP.forEach(function(g){var h="";
  DATA.forEach(function(k,i){if(gid(k)!==g.id||!inG(k)||(flt>=0&&k.d!==flt))return;
+  if(hasSearch&&!kMatch(k,SRCH))return;
   h+='<tr class="k'+(i===sel?" sel":"")+'" data-i="'+i+'"><td>'+(k.cd||k.n)+'</td><td>'+k.t+'</td><td>'+latestTxt(k)+'</td><td>'+k.tg+'</td><td><span class="chip '+st[i].s+'">'+L[st[i].s]+'</span></td></tr>'});
  if(h)out+='<div class="c sc"><h3 class="gt">'+gfull(g.id)+'</h3><table><thead><tr><th>#</th><th>ตัวชี้วัด</th><th>ผลล่าสุด</th><th>เป้าหมาย</th><th>สถานะ</th></tr></thead><tbody>'+h+'</tbody></table></div>'});
+ if(!out&&hasSearch){
+  out='<div class="c" style="text-align:center;padding:36px 16px"><div style="font-size:2.5rem">🔍</div><h3 style="margin:10px 0 4px">ไม่พบตัวชี้วัดที่ตรงกับ "'+E(SRCH)+'"</h3><div class="sb2">ลองค้นหาด้วยชื่อโรค, คำย่อ, ผู้รับผิดชอบ หรือรหัสตัวชี้วัด</div><button class="eb" id="btn_clear_search_empty" style="margin-top:14px">ล้างคำค้นหา</button></div>';
+ }
  document.getElementById("tb").innerHTML=out;
  var k=DATA[sel],g="";
  k.rows.forEach(function(r,ri){var s=rst(k,r);g+='<div class="mc"><div class="mh"><b>'+r[0]+'</b><span class="chip '+s+'">'+L[s]+(r[7]?' (กำหนดเอง)':'')+'</span></div>'+(CE?'<div class="seg"><button data-r="'+ri+'" data-m="auto" class="'+(r[7]?'':'on')+'">อัตโนมัติ</button><button data-r="'+ri+'" data-m="pass" class="p'+(r[7]==="pass"?' on':'')+'">✅ ผ่าน</button><button data-r="'+ri+'" data-m="fail" class="f'+(r[7]==="fail"?' on':'')+'">❌ ไม่ผ่าน</button></div>':'')+(function(){var m=mini(k,r);return m+(m.indexOf("<svg")>=0?chartCtl(k):'')})()+cmpLine(k,r)+(k.res?resLine(k,r):'')+'</div>'});
- document.getElementById("dt").innerHTML='<button class="eb" id="bk" style="margin:0 0 10px;display:block">← กลับแดชบอร์ด</button><div class="kh"><div class="kn"'+((k.cd||"").length>3?' style="font-size:1rem"':'')+'>'+(k.cd||k.n)+'</div><div class="kt"><div class="tt">'+k.t+'</div><div class="kc"><span class="tg">'+gname(gid(k))+'</span>'+(k.oc?'<span class="tg">รหัสเดิมในระบบต้นทาง '+k.oc+'</span>':'')+(gnd(k)?'':'<span class="tg">'+DOM[k.d]+'</span>')+'<span class="tg" style="font-weight:700">🗓️ ปีงบ '+CURY+'</span><span class="tg">🗓 '+k.f+'</span><span class="tg">หน่วย: '+(k.u||"–")+'</span></div></div><span class="chip '+kst(k).s+'" style="font-size:.85rem;padding:4px 14px">'+L[kst(k).s]+'</span></div><div class="m">เป้าหมาย: '+k.tg+'</div><div class="m">ผู้รับผิดชอบ: '+k.o+'</div>'+(CE?'<div><button class="eb'+(adm?' on':'')+'" id="edd">'+(adm?'✖ ปิดการกรอกข้อมูล':'📝 กรอกข้อมูลรายไตรมาส')+'</button><button class="eb" id="edt">✏️ แก้ไขรายละเอียดตัวชี้วัด</button></div>':'')+(k.note?'<div class="nt">📝 '+k.note+'</div>':'')+(adm?editor(k):'')+'<div class="mg">'+g+'</div>';
+ document.getElementById("dt").innerHTML='<div class="print-header" id="print_head_kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h2>🏥 โรงพยาบาลศรีสะเกษ · รายงานตัวชี้วัด SSKH-KPI+</h2><div class="meta">ปีงบประมาณ '+CURY+' · พิมพ์เมื่อ '+(new Date().toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}))+' น.</div></div></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px"><button class="eb" id="bk" style="margin:0">← กลับแดชบอร์ด</button><button class="eb" id="btn_print_kpi"><span class="p-icon">🖨️</span><span>พิมพ์รายงานตัวชี้วัด / PDF</span></button></div><div class="kh"><div class="kn"'+((k.cd||"").length>3?' style="font-size:1rem"':'')+'>'+(k.cd||k.n)+'</div><div class="kt"><div class="tt">'+k.t+'</div><div class="kc"><span class="tg">'+gname(gid(k))+'</span>'+(k.oc?'<span class="tg">รหัสเดิมในระบบต้นทาง '+k.oc+'</span>':'')+(gnd(k)?'':'<span class="tg">'+DOM[k.d]+'</span>')+'<span class="tg" style="font-weight:700">🗓️ ปีงบ '+CURY+'</span><span class="tg">🗓 '+k.f+'</span><span class="tg">หน่วย: '+(k.u||"–")+'</span></div></div><span class="chip '+kst(k).s+'" style="font-size:.85rem;padding:4px 14px">'+L[kst(k).s]+'</span></div><div class="m">เป้าหมาย: '+k.tg+'</div><div class="m">ผู้รับผิดชอบ: '+k.o+'</div>'+(CE?'<div><button class="eb'+(adm?' on':'')+'" id="edd">'+(adm?'✖ ปิดการกรอกข้อมูล':'📝 กรอกข้อมูลรายไตรมาส')+'</button><button class="eb" id="edt">✏️ แก้ไขรายละเอียดตัวชี้วัด</button></div>':'')+(k.note?'<div class="nt">📝 '+k.note+'</div>':'')+(adm?editor(k):'')+'<div class="mg">'+g+'</div>';
  document.getElementById("home").hidden=view!=="home";
  document.getElementById("kv").hidden=view!=="kpi";
  var avEl=document.getElementById("add_view");if(avEl)avEl.hidden=view!=="add";
@@ -976,6 +1431,10 @@ function renderSettingsView(){
     '<div><b style="font-size:1.05rem">จัดการข้อมูล (Data Management)</b><div style="font-size:.8rem;color:var(--mu)">ซิงค์ สำรองข้อมูล และนำเข้าข้อมูล</div></div>'+
    '</div>'+
    '<div style="display:flex;flex-direction:column;gap:10px">'+
+    '<button class="nb" id="st_btn_quick_backup" style="text-align:left;padding:12px 14px;background:linear-gradient(135deg,rgba(255,107,0,.09),rgba(255,107,0,.02));border-radius:12px;border:1px solid var(--ac);display:flex;align-items:center;gap:12px;cursor:pointer">'+
+     '<span style="font-size:1.4rem">💾</span>'+
+     '<div><b style="font-size:.95rem;color:var(--ac)">สำรองข้อมูลด่วนในคลิกเดียว (Full Backup)</b><div style="font-size:.8rem;color:var(--mu)">ดาวน์โหลด JSON รวมข้อมูลผลงาน, รอบจัดเก็บ, กลุ่ม และการตั้งค่าทั้งหมด</div></div>'+
+    '</button>'+
     '<button class="nb" id="btn_sync" style="text-align:left;padding:12px 14px;background:var(--nabg);border-radius:12px;border:1px solid var(--bd);display:flex;align-items:center;gap:12px;cursor:pointer">'+
      '<span style="font-size:1.4rem">🔄</span>'+
      '<div><b style="font-size:.95rem">ซิงค์ Google Sheets</b><div style="font-size:.8rem;color:var(--mu)">เชื่อมต่อหรือดึงข้อมูลล่าสุดแบบ Real-time</div></div>'+
@@ -1372,6 +1831,43 @@ function initFallbackStorage(){
  render();
 }
 
+// ====== Quick Backup & Print Handlers (ข้อ 3, 5) ======
+function quickBackupAll(){
+ var exportObj={
+  version:"2.0",
+  exportTime:new Date().toISOString(),
+  title:"SSKH-KPI+ Full System Backup",
+  fiscalYear:CURY,
+  kpiUpdates:KD,
+  customFreq:typeof CUSTOM_FREQ!=="undefined"?CUSTOM_FREQ:{},
+  customGroups:typeof customGrp!=="undefined"?customGrp:[],
+  customDomains:typeof customDom!=="undefined"?customDom:[],
+  customList:[]
+ };
+ try{
+  var sc=localStorage.getItem("sskh_kpi_custom");
+  if(sc)exportObj.customList=JSON.parse(sc);
+ }catch(z){}
+ var blob=new Blob([JSON.stringify(exportObj,null,2)],{type:"application/json"});
+ var a=document.createElement("a");
+ var dStr=new Date().toISOString().slice(0,10);
+ a.href=URL.createObjectURL(blob);
+ a.download="SSKH_KPI_FullBackup_"+dStr+".json";
+ a.click();
+ toast("💾 สำรองข้อมูลด่วนทั้งหมดสำเร็จ ("+dStr+")");
+}
+
+function printReport(type){
+ if(type==="overview"){
+  var metaEl=document.getElementById("print_meta_home");
+  if(metaEl){
+   var dStr=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+   metaEl.textContent='ปีงบประมาณ '+CURY+' ('+gname(curG)+') · พิมพ์รายงานเมื่อ วันที่ '+dStr+' น.';
+  }
+ }
+ window.print();
+}
+
 // ====== Export & Import Handlers ======
 function exportData(format){
  if(format==="json"){
@@ -1457,8 +1953,12 @@ function showSyncDlg(){
 
 function showDataMgmtDlg(){
  ov('<h3>💾 จัดการข้อมูลระบบ (Data Management)</h3>'+
-  '<p style="font-size:.88rem;color:var(--mu);margin-bottom:14px">ศูนย์รวมเครื่องมือจัดการข้อมูลแดชบอร์ด KPI+ ครบทั้ง 3 รายการ</p>'+
+  '<p style="font-size:.88rem;color:var(--mu);margin-bottom:14px">ศูนย์รวมเครื่องมือจัดการข้อมูลแดชบอร์ด KPI+ ครบทั้ง 4 รายการ</p>'+
   '<div style="display:flex;flex-direction:column;gap:10px">'+
+   '<button class="nb" id="dlg_btn_quick_backup" style="text-align:left;padding:12px 14px;background:var(--nabg);border-radius:14px;border:1.5px solid var(--ac);display:flex;align-items:center;gap:12px;cursor:pointer">'+
+    '<span style="font-size:1.6rem">💾</span>'+
+    '<div><b style="font-size:.95rem;color:var(--ac)">สำรองข้อมูลด่วนในคลิกเดียว (Full Backup)</b><div style="font-size:.8rem;color:var(--mu);margin-top:2px">ดาวน์โหลด JSON รวมข้อมูลผลงาน, รอบจัดเก็บ, กลุ่ม และการตั้งค่าทั้งหมดทันที</div></div>'+
+   '</button>'+
    '<button class="nb" id="dlg_btn_sync" style="text-align:left;padding:12px 14px;background:var(--nabg);border-radius:14px;border:1px solid var(--bd);display:flex;align-items:center;gap:12px;cursor:pointer">'+
     '<span style="font-size:1.6rem">🔄</span>'+
     '<div><b style="font-size:.95rem">ซิงค์ Google Sheets</b><div style="font-size:.8rem;color:var(--mu);margin-top:2px">เชื่อมต่อหรือดึงข้อมูลล่าสุดจาก Google Sheets แบบ Real-time</div></div>'+
@@ -1527,6 +2027,25 @@ document.addEventListener("click",function(e){
   applyTheme();
   return;
  }
+ if(e.target.closest&&e.target.closest("#btn_quick_backup,#st_btn_quick_backup,#dlg_btn_quick_backup,#btn_quick_backup_thp")){
+  quickBackupAll();
+  return;
+ }
+ if(e.target.closest&&e.target.closest("#btn_print_overview")){
+  printReport("overview");
+  return;
+ }
+ if(e.target.closest&&e.target.closest("#btn_print_kpi")){
+  printReport("kpi");
+  return;
+ }
+ if(e.target.closest&&e.target.closest("#btn_clear_search_empty")){
+  var sInp=document.getElementById("kpi_search");
+  if(sInp){sInp.value="";sInp.focus();}
+  SRCH="";
+  render();
+  return;
+ }
  if(e.target.closest&&e.target.closest("#btn_dm_hub,#btn_dm_hub2")){showDataMgmtDlg();return}
  if(e.target.closest&&e.target.closest("#btn_exp,#btn_exp2,#dlg_btn_exp")){showExportDlg();return}
  if(e.target.closest&&e.target.closest("#btn_imp,#btn_imp2,#dlg_btn_imp")){showImportDlg();return}
@@ -1573,6 +2092,22 @@ document.addEventListener("click",function(e){
     if(obj.customList&&Array.isArray(obj.customList)){
      try{localStorage.setItem("sskh_kpi_custom",JSON.stringify(obj.customList))}catch(z){}
     }
+    if(obj.customFreq&&typeof obj.customFreq==="object"){
+     try{
+      CUSTOM_FREQ=Object.assign(typeof CUSTOM_FREQ!=="undefined"?CUSTOM_FREQ:{},obj.customFreq);
+      localStorage.setItem("sskh_custom_freq",JSON.stringify(CUSTOM_FREQ));
+     }catch(z){}
+    }
+    if(obj.customGroups&&Array.isArray(obj.customGroups)){
+     try{
+      localStorage.setItem("sskh_kpi_custom_grp",JSON.stringify(obj.customGroups));
+     }catch(z){}
+    }
+    if(obj.customDomains&&Array.isArray(obj.customDomains)){
+     try{
+      localStorage.setItem("sskh_kpi_custom_dom",JSON.stringify(obj.customDomains));
+     }catch(z){}
+    }
     applyOv();
     ov(null);
     toast("นำเข้าข้อมูลสำเร็จเรียบร้อย 🎉");
@@ -1584,6 +2119,43 @@ document.addEventListener("click",function(e){
   return;
  }
 });
+
+// ====== Quick Search Box Listeners (ข้อ 2) ======
+(function(){
+ var sInp=document.getElementById("kpi_search");
+ if(sInp){
+  sInp.addEventListener("input",function(){
+   SRCH=this.value||"";
+   render();
+  });
+  sInp.addEventListener("keydown",function(e){
+   if(e.key==="Escape"){
+    this.value="";
+    SRCH="";
+    render();
+   }
+  });
+ }
+ var sClr=document.getElementById("kpi_search_clear");
+ if(sClr){
+  sClr.addEventListener("click",function(){
+   if(sInp){sInp.value="";sInp.focus();}
+   SRCH="";
+   render();
+  });
+ }
+ document.addEventListener("keydown",function(e){
+  var tag=(document.activeElement||{}).tagName;
+  var inEdit=tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT";
+  if(e.key==="/"&&!inEdit){
+   e.preventDefault();
+   if(sInp){sInp.focus();sInp.select();}
+  }else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){
+   e.preventDefault();
+   if(sInp){sInp.focus();sInp.select();}
+  }
+ });
+})();
 
 // ====== Main Init Routine ======
 (async function(){
